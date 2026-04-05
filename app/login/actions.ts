@@ -34,10 +34,13 @@ export async function loginAction(prevState: any, formData: FormData) {
     },
   });
 
+  // Verificación de estado de cuenta
+  if (userWithRoles?.estado_cuenta?.toLowerCase() === "suspendido") {
+    redirect("/deactivated");
+  }
+
   // Verificamos si es "Admin" (Coincidiendo con tu tabla 'rol')
-  const isAdmin = userWithRoles?.roles.some(
-    (r: any) => r.rol.nombre === "Admin",
-  );
+  const isAdmin = userWithRoles?.roles.some((r: any) => r.rol.nombre === "Admin");
 
   const cookieStore = await cookies();
   const duration = 60 * 60 * 24; // 24 horas

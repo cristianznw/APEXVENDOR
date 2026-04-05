@@ -24,6 +24,10 @@ type RegisterUserInput = {
   linkedin?: string | null;
   website?: string | null;
   github?: string | null;
+
+  // disponibilidad
+  dias_disponibles?: string[] | null;
+  horas_disponibles?: string[] | null;
 };
 
 type AddCvInput = {
@@ -81,6 +85,8 @@ export const userService = {
             linkedin: data.linkedin ?? null,
             website: data.website ?? null,
             github: data.github ?? null,
+            dias_disponibles: data.dias_disponibles ?? [],
+            horas_disponibles: data.horas_disponibles ?? [],
           },
         });
       }

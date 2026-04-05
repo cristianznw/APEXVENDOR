@@ -75,6 +75,12 @@ export async function registerAction(prevState: any, formData: FormData) {
       return { error: "Este correo ya está registrado." };
     }
 
+    // Disponibilidad
+    const dias_disponibles_raw = formData.get("dias_disponibles") as string;
+    const horas_disponibles_raw = formData.get("horas_disponibles") as string;
+    const dias_disponibles = dias_disponibles_raw ? JSON.parse(dias_disponibles_raw) : [];
+    const horas_disponibles = horas_disponibles_raw ? JSON.parse(horas_disponibles_raw) : [];
+
     // 1) Crear usuario + perfil (retorna Usuario con id_usuario)
     const user = await userService.registerUser({
       username,
@@ -92,6 +98,8 @@ export async function registerAction(prevState: any, formData: FormData) {
       github,
       website,
       instagram,
+      dias_disponibles,
+      horas_disponibles,
     });
 
     const idProveedor = user.id_usuario;

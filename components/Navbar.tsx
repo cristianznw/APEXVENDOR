@@ -2,6 +2,7 @@
 
 import { logoutAction } from "@/app/logout/actions";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -37,9 +38,19 @@ export default function Navbar({ username, role }: NavbarProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="text-2xl font-black tracking-tighter text-white uppercase hover:text-[#e9d26a] transition-colors"
+          className="flex items-center gap-3 text-2xl font-black tracking-tighter text-white uppercase hover:text-[#e9d26a] transition-colors"
         >
-          Apex<span className="text-[#e9d26a]">Vendor</span>
+          <Image
+            src="/TAK_Logo_Symbol.png"
+            alt="TAK Logo"
+            width={60}
+            height={20}
+            priority
+            className="object-contain w-auto h-6 opacity-90"
+          />
+          <span>
+            Apex<span className="text-[#e9d26a]">Vendor</span>
+          </span>
         </Link>
 
         {/* Links de Navegación Dinámicos (Desktop) */}

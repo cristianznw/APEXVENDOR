@@ -8,6 +8,7 @@ import {
   updatePortfolioAction,
   uploadCertAction,
   uploadCvAction,
+  deleteAgreementAction,
 } from "@/app/dashboard/profile/actions";
 import { useEffect, useState } from "react";
 import Modal from "../Modal";
@@ -681,12 +682,28 @@ export default function ProfileView({
                           {proj.contract.name || "Contrato"}
                         </p>
                       </div>
-                      <button
-                        onClick={() => openWithSas(proj.contract.url)}
-                        className="text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full bg-[#252525] text-[#e9d26a] cursor-pointer hover:bg-black transition-all"
-                      >
-                        Ver Documento
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => openWithSas(proj.contract.url)}
+                          className="text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full bg-[#252525] text-[#e9d26a] cursor-pointer hover:bg-black transition-all"
+                        >
+                          Ver Documento
+                        </button>
+                        {isAdminViewing && (
+                          <button
+                            onClick={async () => {
+                              if (!confirm("¿Eliminar este contrato?")) return;
+                              const res = await deleteAgreementAction(proj.contract.id);
+                              if (res?.error) alert(res.error);
+                              else router.refresh();
+                            }}
+                            className="text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full bg-[#EB2328] text-white cursor-pointer hover:bg-[#FF3C39] active:scale-95 transition-all shadow-md"
+                            title="Eliminar Contrato"
+                          >
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
 

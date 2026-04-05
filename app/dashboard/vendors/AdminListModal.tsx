@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toggleVendorStatusAction } from "./actions";
 
 export default function AdminListModal({
     admins,
@@ -10,6 +11,7 @@ export default function AdminListModal({
         username: string | null;
         correo: string;
         creado_en: Date;
+        estado_cuenta: string;
     }[];
 }) {
     const [open, setOpen] = useState(false);
@@ -57,17 +59,44 @@ export default function AdminListModal({
                                         key={admin.id_usuario}
                                         className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:border-[#e9d26a]/40 transition-colors"
                                     >
-                                        <div>
-                                            <div className="font-bold text-[#252525] text-base leading-tight">
-                                                @{admin.username || "sin_usuario"}
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <div className="font-bold text-[#252525] text-base leading-tight">
+                                                    @{admin.username || "sin_usuario"}
+                                                </div>
+                                                {admin.estado_cuenta?.toLowerCase() === "suspendido" && (
+                                                    <span className="bg-red-100 text-red-600 text-[8px] font-black uppercase px-2 py-0.5 rounded-full">
+                                                        Suspendido
+                                                    </span>
+                                                )}
+                                                {(admin.estado_cuenta?.toLowerCase() === "activo" || !admin.estado_cuenta) && (
+                                                    <span className="bg-green-100 text-green-600 text-[8px] font-black uppercase px-2 py-0.5 rounded-full">
+                                                        Activo
+                                                    </span>
+                                                )}
                                             </div>
-                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none">
                                                 {admin.correo}
+                                            </div>
+                                            <div className="text-[9px] text-[#bba955] font-black uppercase tracking-tighter mt-1">
+                                                Creado: {new Date(admin.creado_en).toLocaleDateString()}
                                             </div>
                                         </div>
 
-                                        <div className="mt-2 sm:mt-0 text-[10px] text-[#bba955] font-black uppercase tracking-tighter bg-[#e9d26a]/10 px-3 py-1.5 rounded-xl self-start sm:self-auto">
-                                            Creado: {new Date(admin.creado_en).toLocaleDateString()}
+                                        <div className="mt-4 sm:mt-0">
+                                            <form action={(formData) => { toggleVendorStatusAction(formData); }}>
+                                                <input type="hidden" name="id_usuario" value={admin.id_usuario} />
+                                                <input type="hidden" name="currentStatus" value={admin.estado_cuenta || 'Activo'} />
+                                                <button
+                                                    type="submit"
+                                                    className={`inline-flex items-center justify-center px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-md transition-all cursor-pointer ${(admin.estado_cuenta?.toLowerCase() || 'activo') === 'activo'
+                                                        ? 'bg-red-50/50 text-red-600 hover:bg-red-100 border border-red-200'
+                                                        : 'bg-green-50/50 text-green-600 hover:bg-green-100 border border-green-200'
+                                                        }`}
+                                                >
+                                                    {(admin.estado_cuenta?.toLowerCase() || 'activo') === 'activo' ? 'Desactivar' : 'Activar'}
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 ))}

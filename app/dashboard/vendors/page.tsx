@@ -26,7 +26,13 @@ export default async function VendorsPage() {
 
   const admins = await db.usuario.findMany({
     where: { roles: { some: { rol: { nombre: "Admin" } } } },
-    select: { id_usuario: true, username: true, correo: true, creado_en: true },
+    select: {
+      id_usuario: true,
+      username: true,
+      correo: true,
+      creado_en: true,
+      estado_cuenta: true,
+    },
     orderBy: { creado_en: "asc" },
   });
 

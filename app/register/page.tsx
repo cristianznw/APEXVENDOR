@@ -60,6 +60,115 @@ export default function RegisterPage() {
     },
   ]);
 
+  // Disponibilidad
+  const DAYS_OF_WEEK = [
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+    "Domingo",
+  ];
+  const [selectedDays, setSelectedDays] = useState<string[]>(["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]);
+  const [startTime, setStartTime] = useState("08:00");
+  const [endTime, setEndTime] = useState("17:00");
+
+  const toggleDay = (day: string) => {
+    setSelectedDays((prev) => {
+      const next = prev.includes(day)
+        ? prev.filter((d) => d !== day)
+        : [...prev, day];
+      return next.sort(
+        (a, b) => DAYS_OF_WEEK.indexOf(a) - DAYS_OF_WEEK.indexOf(b),
+      );
+    });
+  };
+
+  const format12h = (time: string) => {
+    if (!time) return "--:--";
+    const [h, m] = time.split(":").map(Number);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    return `${h12}:${m.toString().padStart(2, "0")} ${ampm}`;
+  };
+
+  const TimeSelector = ({
+    label,
+    value,
+    onChange,
+  }: {
+    label: string;
+    value: string;
+    onChange: (val: string) => void;
+  }) => {
+    const [h, m] = value.split(":");
+    const hour24 = parseInt(h);
+    const ampm = hour24 >= 12 ? "PM" : "AM";
+    const hour12 = hour24 % 12 || 12;
+
+    const handleHourChange = (newH12: number) => {
+      let newH24 = newH12;
+      if (ampm === "PM" && newH12 < 12) newH24 += 12;
+      if (ampm === "AM" && newH12 === 12) newH24 = 0;
+      onChange(`${newH24.toString().padStart(2, "0")}:${m}`);
+    };
+
+    const handleMinuteChange = (newM: string) => {
+      onChange(`${h}:${newM}`);
+    };
+
+    const toggleAMPM = () => {
+      let newH24 = hour24;
+      if (ampm === "AM") {
+        newH24 = (hour24 + 12) % 24;
+      } else {
+        newH24 = (hour24 - 12 + 24) % 24;
+      }
+      onChange(`${newH24.toString().padStart(2, "0")}:${m}`);
+    };
+
+    return (
+      <div className="flex flex-col gap-2">
+        <p className="text-[9px] font-black text-[#bba955] uppercase tracking-widest">
+          {label}
+        </p>
+        <div className="flex items-center gap-2 bg-[#fcfcfc] border border-gray-100 rounded-2xl p-2 px-4 shadow-sm focus-within:border-[#e9d26a] transition-all group">
+          <select
+            value={hour12}
+            onChange={(e) => handleHourChange(parseInt(e.target.value))}
+            className="bg-transparent text-sm font-black outline-none cursor-pointer p-1 appearance-none hover:text-[#bba955] transition-colors"
+          >
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+              <option key={num} value={num}>
+                {num.toString().padStart(2, "0")}
+              </option>
+            ))}
+          </select>
+          <span className="text-gray-300 font-bold">:</span>
+          <select
+            value={m}
+            onChange={(e) => handleMinuteChange(e.target.value)}
+            className="bg-transparent text-sm font-black outline-none cursor-pointer p-1 appearance-none hover:text-[#bba955] transition-colors"
+          >
+            {Array.from({ length: 60 }, (_, i) => i).map((min) => (
+              <option key={min} value={min.toString().padStart(2, "0")}>
+                {min.toString().padStart(2, "0")}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={toggleAMPM}
+            className="ml-auto bg-[#252525] text-[#e9d26a] text-[10px] font-black px-4 py-2 rounded-xl active:scale-95 transition-all hover:bg-black hover:shadow-lg uppercase tracking-widest"
+          >
+            {ampm}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const passMismatch = confirm.length > 0 && password !== confirm;
   const isPasswordShort = password.length > 0 && password.length < 8;
   const isPhoneShort = telefono.length > 0 && telefono.length < 10;
@@ -96,7 +205,10 @@ export default function RegisterPage() {
     if (step === 3) {
       if (!name || !nit || !city || isPhoneShort) return;
     }
-    setStep((s) => Math.min(4, s + 1));
+    if (step === 4) {
+      if (!selectedDays.length) return;
+    }
+    setStep((s) => Math.min(5, s + 1));
   };
 
   const back = () => setStep((s) => Math.max(1, s - 1));
@@ -133,7 +245,7 @@ export default function RegisterPage() {
             Registro
           </h2>
           <div className="h-1.5 w-12 bg-[#e9d26a] mx-auto mt-2 rounded-full" />
-          <p className="text-sm text-gray-500 mt-2">Paso {step} de 4</p>
+          <p className="text-sm text-gray-500 mt-2">Paso {step} de 5</p>
         </div>
 
         <form action={formAction} className="flex flex-col gap-4">
@@ -158,6 +270,9 @@ export default function RegisterPage() {
           <input type="hidden" name="github" value={github} />
           <input type="hidden" name="website" value={website} />
           <input type="hidden" name="instagram" value={instagram} />
+
+          <input type="hidden" name="dias_disponibles" value={JSON.stringify(selectedDays)} />
+          <input type="hidden" name="horas_disponibles" value={JSON.stringify([startTime, endTime])} />
 
           <input type="hidden" name="is_admin" value="false" />
 
@@ -424,6 +539,74 @@ export default function RegisterPage() {
 
           {/* STEP 4 */}
           {step === 4 && (
+            <div className="animate-in fade-in slide-in-from-right duration-500 space-y-6">
+              <div>
+                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mb-4">
+                  Días de Disponibilidad
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {DAYS_OF_WEEK.map((day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleDay(day)}
+                      className={`text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full transition-all border ${selectedDays.includes(day)
+                        ? "bg-[#e9d26a] text-[#252525] border-[#e9d26a] shadow-lg"
+                        : "bg-transparent text-gray-400 border-gray-200 hover:border-[#e9d26a] hover:text-[#252525]"
+                        }`}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mb-4 mt-6">
+                  Horario de Disponibilidad
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <TimeSelector
+                    label="Desde"
+                    value={startTime}
+                    onChange={setStartTime}
+                  />
+                  <TimeSelector
+                    label="Hasta"
+                    value={endTime}
+                    onChange={setEndTime}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 font-bold uppercase mt-4">
+                  Rango de servicio:{" "}
+                  <span className="text-[#252525] font-black whitespace-nowrap">
+                    {format12h(startTime)} — {format12h(endTime)}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button
+                  type="button"
+                  className="btn-secondary flex-1 py-3 cursor-pointer"
+                  onClick={back}
+                >
+                  Atrás
+                </button>
+                <button
+                  type="button"
+                  className="btn-gold flex-1 py-3"
+                  onClick={next}
+                  disabled={!selectedDays.length}
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 */}
+          {step === 5 && (
             <>
               <label className="text-xs font-bold text-gray-400 ml-1 uppercase">
                 Hoja de vida (PDF)

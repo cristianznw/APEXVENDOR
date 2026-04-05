@@ -1,10 +1,9 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { generateUsername } from "@/lib/utils";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function createAdminAction(formData: FormData) {
   const cookieStore = await cookies();
@@ -24,7 +23,7 @@ export async function createAdminAction(formData: FormData) {
   // 2) Datos del formulario
   const rawUsername = formData.get("username") as string;
   const rawCorreo = formData.get("correo") as string;
-  const correo = rawCorreo ? rawCorreo.toLowerCase().replace(/\s/g, '') : "";
+  const correo = rawCorreo ? rawCorreo.toLowerCase().replace(/\s/g, "") : "";
   const password = formData.get("password") as string;
   const confirm = formData.get("confirm") as string;
 
@@ -32,7 +31,7 @@ export async function createAdminAction(formData: FormData) {
     return { error: "Completa todos los campos" };
   }
 
-  const username = rawUsername.trim().toLowerCase().replace(/\s/g, '');
+  const username = rawUsername.trim().toLowerCase().replace(/\s/g, "");
 
   if (username.length > 20) {
     return { error: "El username no puede tener más de 20 caracteres" };
@@ -100,7 +99,10 @@ export async function createAdminAction(formData: FormData) {
 
 import { projectService } from "@/services/projectService";
 
-export async function assignVendorFromProfileAction(prev: any, formData: FormData) {
+export async function assignVendorFromProfileAction(
+  prev: any,
+  formData: FormData,
+) {
   try {
     const cookieStore = await cookies();
     const username = cookieStore.get("username")?.value;
@@ -136,5 +138,43 @@ export async function assignVendorFromProfileAction(prev: any, formData: FormDat
     return { success: true };
   } catch (e: any) {
     return { error: e?.message || "Error al asignar proyecto" };
+  }
+}
+
+export async function toggleVendorStatusAction(formData: FormData) {
+  try {
+    const cookieStore = await cookies();
+    const username = cookieStore.get("username")?.value;
+    if (!username) return { error: "No autorizado" };
+
+    const user = await db.usuario.findUnique({
+      where: { username },
+      include: { roles: { include: { rol: true } } },
+    });
+
+    const isAdmin = user?.roles?.some((r: any) => r.rol.nombre === "Admin");
+    if (!isAdmin) return { error: "No autorizado" };
+
+    const id_usuario = String(formData.get("id_usuario") || "");
+    const currentStatus = String(formData.get("currentStatus") || "");
+    const currentPath = String(
+      formData.get("currentPath") || "/dashboard/vendors",
+    );
+
+    if (!id_usuario) return { error: "ID de usuario requerido" };
+
+    const newStatus =
+      currentStatus.toLowerCase() === "activo" ? "Suspendido" : "Activo";
+
+    await db.usuario.update({
+      where: { id_usuario },
+      data: { estado_cuenta: newStatus },
+    });
+
+    revalidatePath(currentPath);
+    return { success: true, newStatus };
+  } catch (e: any) {
+    console.error("toggleVendorStatusAction error:", e);
+    return { error: e?.message || "Error al cambiar estado de cuenta" };
   }
 }

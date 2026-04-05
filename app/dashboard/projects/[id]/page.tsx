@@ -118,6 +118,7 @@ export default async function ProjectDetailPage({
                                 projectStatus={project.estado || undefined}
                                 metrics={metrics}
                                 currentUserId={user?.id_usuario || ""}
+                                isAdmin={isAdmin ?? false}
                             />
 
                         </div>

@@ -104,6 +104,11 @@ export const projectService = {
     return await db.perfilProveedor.findMany({
       where: {
         id_proveedor: { notIn: assignedIds.length ? assignedIds : undefined },
+        usuario: {
+          estado_cuenta: {
+            not: "Suspendido",
+          },
+        },
       },
       include: {
         usuario: true,
@@ -203,6 +208,15 @@ export const projectService = {
     if (existing)
       throw new Error("Este proveedor ya está asignado al proyecto.");
 
+    // Validar estado de cuenta
+    const vendor = await db.perfilProveedor.findUnique({
+      where: { id_proveedor: params.id_proveedor },
+      include: { usuario: true }
+    });
+    if (!vendor || vendor.usuario?.estado_cuenta?.toLowerCase() === "suspendido") {
+      throw new Error("No se puede asignar un proveedor con cuenta suspendida.");
+    }
+
     // Validar fechas
     const proyecto = await db.proyecto.findUnique({
       where: { id_proyecto: params.id_proyecto }
@@ -232,9 +246,14 @@ export const projectService = {
       });
 
       if (params.contrato) {
+        // Validation: Only PDF
+        if (params.contrato.type !== "application/pdf") {
+          throw new Error("Solo se permiten archivos PDF para el contrato.");
+        }
+
         // Upload to Azure Blob Storage
         const containerName = process.env.AZURE_STORAGE_CONTRACT_CONTAINER || "contratos";
-        const fileExt = params.contrato.name.split(".").pop() || "pdf";
+        const fileExt = "pdf"; // Forced for safety
         const blobName = `${params.id_proyecto}-${params.id_proveedor}-${Date.now()}.${fileExt}`;
 
         const uploadResult = await uploadToAzureBlob({

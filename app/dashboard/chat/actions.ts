@@ -39,7 +39,8 @@ export async function deleteMetricAction(id: string) {
 
     if (usageCount > 0) {
       return {
-        error: "Esta métrica ya ha sido usada para evaluar a un proveedor y no puede ser eliminada.",
+        error:
+          "Esta métrica ya ha sido usada para evaluar a un proveedor y no puede ser eliminada.",
       };
     }
 
@@ -73,6 +74,7 @@ export async function sendMessageAction(message: string, history: any[]) {
         usuario: {
           select: {
             username: true,
+            estado_cuenta: true,
           },
         },
         tarifa_hora: true,
@@ -133,7 +135,7 @@ export async function sendMessageAction(message: string, history: any[]) {
   Eres Apex Intelligence, el asistente experto de la plataforma Apex. 
   Tienes acceso en tiempo real a nuestra base de datos de proveedores.
   
-  CONOCIMIENTO ACTUAL DE PROVEEDORES:
+  CONOCIMIENTO ACTUAL DE PROVEEDORES (NO INCLUIR A LOS SUSPENDIDOS):
   ${JSON.stringify(proveedores)}
 
   CONOCIMIENTO ACTUAL DE PROYECTOS:

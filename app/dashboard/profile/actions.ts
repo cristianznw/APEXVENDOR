@@ -452,3 +452,43 @@ export async function updatePasswordAction(
     return { error: "Error al actualizar la contraseña" };
   }
 }
+
+/** Eliminar Contrato de Participación (Solo Admin) */
+export async function deleteAgreementAction(id_contrato: string) {
+  const username = await getSessionUsername();
+  if (!username) return { error: "No autorizado" };
+
+  try {
+    const userWithRoles = await db.usuario.findUnique({
+      where: { username },
+      include: { roles: { include: { rol: true } } },
+    });
+
+    const isAdmin = userWithRoles?.roles.some((r: any) => r.rol.nombre === "Admin");
+    if (!isAdmin) {
+      return { error: "No autorizado. Solo administradores pueden eliminar contratos de participación." };
+    }
+
+    const contract = await db.contrato_participacion.findUnique({
+      where: { id_contrato },
+    });
+
+    if (!contract) return { error: "Documento no encontrado" };
+
+    // 1. Borrar de Azure
+    await deleteBlobByUrl(contract.url_archivo);
+
+    // 2. Borrar de DB
+    await db.contrato_participacion.delete({
+      where: { id_contrato },
+    });
+
+    revalidatePath("/dashboard/profile");
+    // Notar: revalidatePath de proyecto se encargará el usuario al navegar o mediante tags si fuera necesario, 
+    // pero por ahora profile es suficiente para pruebas.
+    return { success: true };
+  } catch (e: any) {
+    console.error(e);
+    return { error: e?.message ?? "No se pudo eliminar el contrato" };
+  }
+}

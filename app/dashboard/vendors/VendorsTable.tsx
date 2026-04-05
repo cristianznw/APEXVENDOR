@@ -3,6 +3,7 @@
 import { Slider, SliderValue } from "@heroui/slider";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { toggleVendorStatusAction } from "./actions";
 
 type SortField = "nombres_apellidos" | "ciudad" | "score";
 type SortOrder = "asc" | "desc";
@@ -215,15 +216,27 @@ export default function VendorsTable({
                   className="hover:bg-gray-50/80 transition-all group"
                 >
                   <td className="px-8 py-5">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-1">
                       <span className="font-bold text-[#252525] text-base">
                         {v.nombres_apellidos ||
                           v.nombre_legal ||
                           "Nombre no disponible"}
                       </span>
-                      <span className="text-[10px] text-[#bba955] font-black uppercase tracking-tighter">
-                        @{v.usuario?.username || "sin-usuario"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-[#bba955] font-black uppercase tracking-tighter">
+                          @{v.usuario?.username || "sin-usuario"}
+                        </span>
+                        {v.usuario?.estado_cuenta?.toLowerCase() === 'suspendido' && (
+                          <span className="bg-red-100 text-red-600 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">
+                            Suspendido
+                          </span>
+                        )}
+                        {(v.usuario?.estado_cuenta?.toLowerCase() === 'activo' || !v.usuario?.estado_cuenta) && (
+                          <span className="bg-green-100 text-green-600 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">
+                            Activo
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
 
@@ -254,6 +267,21 @@ export default function VendorsTable({
                   </td>
 
                   <td className="px-8 py-5 text-right flex justify-end gap-2">
+                    {v.usuario?.id_usuario && (
+                      <form action={(formData) => { toggleVendorStatusAction(formData); }}>
+                        <input type="hidden" name="id_usuario" value={v.usuario.id_usuario} />
+                        <input type="hidden" name="currentStatus" value={v.usuario.estado_cuenta || 'Activo'} />
+                        <button
+                          type="submit"
+                          className={`inline-flex items-center justify-center px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all ${(v.usuario.estado_cuenta?.toLowerCase() || 'activo') === 'activo'
+                              ? 'bg-red-50/50 text-red-600 hover:bg-red-100 border border-red-200'
+                              : 'bg-green-50/50 text-green-600 hover:bg-green-100 border border-green-200'
+                            }`}
+                        >
+                          {(v.usuario.estado_cuenta?.toLowerCase() || 'activo') === 'activo' ? 'Desactivar' : 'Activar'}
+                        </button>
+                      </form>
+                    )}
                     <Link
                       href={`/dashboard/vendors/${v.usuario?.username || ""}`}
                       className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#252525] text-[#e9d26a] hover:bg-black transition-all text-[10px] font-black uppercase tracking-widest shadow-md"

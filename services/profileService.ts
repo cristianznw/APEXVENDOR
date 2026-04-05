@@ -94,6 +94,7 @@ export async function getFullProfile(username: string) {
             status: p.proyecto.estado,
           },
           contract: contract ? {
+            id: contract.id_contrato,
             url: contract.url_archivo,
             name: contract.nombre_archivo,
             uploadedBy: contract.cargado_por

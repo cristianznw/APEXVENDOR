@@ -11,7 +11,7 @@ import {
 import AssignVendorModal from "./AssignVendorModal";
 import EditVendorAssignmentModal from "./EditVendorAssignmentModal";
 import EvaluateVendorModal from "./EvaluateVendorModal";
-import { getSasUrlAction } from "@/app/dashboard/profile/actions";
+import { getSasUrlAction, deleteAgreementAction } from "@/app/dashboard/profile/actions";
 
 type ActionState = { success?: boolean; error?: string } | null;
 
@@ -22,6 +22,7 @@ export default function VendorsTable({
   projectStatus,
   metrics,
   currentUserId,
+  isAdmin,
 }: {
   projectId: string;
   participants: any[];
@@ -29,6 +30,7 @@ export default function VendorsTable({
   projectStatus?: string;
   metrics: any[];
   currentUserId: string;
+  isAdmin?: boolean;
 }) {
   const router = useRouter();
 
@@ -166,6 +168,21 @@ export default function VendorsTable({
                   >
                     Ver Documento
                   </button>
+
+                  {isAdmin && (
+                    <button
+                      onClick={async () => {
+                        if (!confirm("¿Eliminar este contrato?")) return;
+                        const res = await deleteAgreementAction(x.contrato_participacion[0].id_contrato);
+                        if (res?.error) alert(res.error);
+                        else router.refresh();
+                      }}
+                      className="ml-2 text-red-500 hover:text-red-700 font-bold transition-colors"
+                      title="Eliminar Contrato"
+                    >
+                      Eliminar
+                    </button>
+                  )}
                 </div>
               )}
             </div>

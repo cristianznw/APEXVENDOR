@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useActionState } from "react";
 import { loginAction } from "./actions";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, null);
@@ -14,7 +15,21 @@ export default function LoginPage() {
         animate={{ opacity: 1, scale: 1 }}
         className="form-div" // Corregido de form_div a form-div
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 flex flex-col items-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-4"
+          >
+            <Image
+              src="/TAK_Logo_Symbol.png"
+              alt="TAK Logo Symbol"
+              width={56}
+              height={56}
+              priority
+              className="object-contain"
+            />
+          </motion.div>
           <motion.h2
             layoutId="logo"
             className="text-4xl font-black text-[#252525] tracking-tighter uppercase"
