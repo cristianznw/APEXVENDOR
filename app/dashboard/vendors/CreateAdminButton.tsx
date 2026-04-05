@@ -4,6 +4,12 @@ import { useState } from "react";
 import { createAdminAction } from "./actions";
 import { checkEmailExistsAction } from "@/app/register/actions";
 
+/**
+ * Componente que muestra un botón para abrir un modal de creación de nuevos administradores.
+ * Incluye lógica de validación de correo electrónico en tiempo real (onBlur) para evitar duplicados.
+ * 
+ * @returns El elemento JSX con el botón y el modal de registro de administradores.
+ */
 export default function CreateAdminButton() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -11,6 +17,10 @@ export default function CreateAdminButton() {
   const [emailError, setEmailError] = useState("");
   const [checkingEmail, setCheckingEmail] = useState(false);
 
+  /**
+   * Verifica si el correo electrónico ingresado ya existe en la base de datos al perder el foco del input.
+   * Actualiza el estado de error si el correo ya está registrado.
+   */
   const handleEmailBlur = async () => {
     if (!correo) return;
     setCheckingEmail(true);

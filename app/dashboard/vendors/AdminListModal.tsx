@@ -3,14 +3,28 @@
 import { useState } from "react";
 import { toggleVendorStatusAction } from "./actions";
 
+/**
+ * Componente modal que muestra la lista de todos los administradores registrados.
+ * Permite visualizar el estado de cada cuenta (Activo/Suspendido) y realizar cambios de estado
+ * directamente desde el directorio.
+ * 
+ * @param props - Lista de administradores con sus datos básicos y estado de cuenta.
+ * @returns El elemento JSX con el botón de apertura y el modal del directorio de administradores.
+ */
 export default function AdminListModal({
     admins,
 }: {
+    /** Arreglo de objetos que representan a los administradores. */
     admins: {
+        /** ID único del usuario. */
         id_usuario: string;
+        /** Nombre de usuario. */
         username: string | null;
+        /** Correo electrónico. */
         correo: string;
+        /** Fecha de creación de la cuenta. */
         creado_en: Date;
+        /** Estado actual (Activo/Suspendido). */
         estado_cuenta: string;
     }[];
 }) {

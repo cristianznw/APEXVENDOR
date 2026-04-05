@@ -4,6 +4,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
+/**
+ * Página informativa para usuarios con cuenta desactivada o suspendida.
+ * Muestra un mensaje de advertencia y proporciona canales de contacto para la reactivación.
+ * Estilo visual oscuro con acentos en rojo para indicar restricción.
+ * 
+ * @returns El elemento JSX de la página de cuenta desactivada.
+ */
 export default function DeactivatedPage() {
   return (
     <div className="min-h-screen bg-[#252525] flex flex-col items-center justify-center p-6 text-center">

@@ -1,5 +1,12 @@
 import { db } from "@/lib/db";
 
+/**
+ * Obtiene el perfil completo de un usuario por su nombre de usuario.
+ * Incluye detalles del perfil de proveedor, roles, fotos de perfil, proyectos y evaluaciones.
+ * 
+ * @param username - El nombre de usuario único del cual obtener el perfil.
+ * @returns Un objeto con la información del usuario, detalles del proveedor, documentos, proyectos, roles y avatar, o null si no se encuentra.
+ */
 export async function getFullProfile(username: string) {
   if (!username) return null;
   const data = await db.usuario.findUnique({
@@ -117,6 +124,13 @@ export async function getFullProfile(username: string) {
   };
 }
 
+/**
+ * Actualiza o crea la foto de perfil (PFP) de un usuario.
+ * 
+ * @param username - El nombre de usuario al que pertenece la foto.
+ * @param base64Image - La imagen codificada en formato base64.
+ * @returns La entrada de la foto de perfil creada o actualizada en la base de datos.
+ */
 export async function updatePfp(username: string, base64Image: string) {
   const existingPfp = await db.pfps.findFirst({
     where: { username: username },

@@ -6,6 +6,13 @@ const model = genAI.getGenerativeModel({
   model: "gemini-flash-latest",
 });
 
+/**
+ * Extrae el texto legible de un archivo PDF a partir de un buffer de datos.
+ * Utiliza PDFParser para procesar el contenido de todas las páginas.
+ * 
+ * @param buffer - El buffer que contiene los datos binarios del archivo PDF.
+ * @returns Una promesa que resuelve con el texto extraído del PDF.
+ */
 export async function getPdfText(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     const pdfParser = new (PDFParser as any)(null, 1);
@@ -26,6 +33,13 @@ export async function getPdfText(buffer: Buffer): Promise<string> {
   });
 }
 
+/**
+ * Envía una consulta al modelo de IA Gemini manteniendo el contexto de la conversación.
+ * 
+ * @param prompt - El mensaje o pregunta que se desea enviar a la IA.
+ * @param history - El historial de la conversación previa para mantener el contexto.
+ * @returns La respuesta generada por el modelo de IA o un mensaje de error amigable.
+ */
 export async function askGemini(prompt: string, history: any[]) {
   try {
     // Filtramos el historial para asegurarnos de que los roles sean correctos

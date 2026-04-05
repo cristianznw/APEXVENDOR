@@ -5,6 +5,16 @@ import { authService } from "@/services/authService";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+/**
+ * Acción de servidor para procesar el inicio de sesión del usuario.
+ * Valida las credenciales mediante el servicio de autenticación, verifica el estado de la cuenta
+ * (suspendida), identifica los roles del usuario y establece las cookies de sesión correspondientes.
+ * Realiza una redirección dinámica basada en el rol (Admin -> Chat, Proveedor -> Perfil).
+ * 
+ * @param prevState - Estado previo de la acción.
+ * @param formData - Datos del formulario (username y password).
+ * @returns Un objeto con error en caso de fallo, o redirige al dashboard en caso de éxito.
+ */
 export async function loginAction(prevState: any, formData: FormData) {
   const rawUsernameInput = formData.get("username") as string;
   const usernameInput = rawUsernameInput.trim().toLowerCase();

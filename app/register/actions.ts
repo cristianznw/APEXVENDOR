@@ -21,6 +21,13 @@ function assertPdf(file: File) {
   }
 }
 
+/**
+ * Acción de servidor para verificar si un correo electrónico ya está registrado en la base de datos.
+ * Se utiliza para validación en tiempo real durante el primer paso del registro.
+ * 
+ * @param email - La dirección de correo a verificar.
+ * @returns Un booleano indicando si el correo ya existe en el sistema.
+ */
 export async function checkEmailExistsAction(email: string) {
   const existingUser = await db.usuario.findUnique({
     where: { correo: email.trim().toLowerCase() },
@@ -28,6 +35,16 @@ export async function checkEmailExistsAction(email: string) {
   return !!existingUser;
 }
 
+/**
+ * Acción de servidor principal para el registro de nuevos usuarios (proveedores o administradores).
+ * Procesa los datos del perfil, realiza el hash de contraseñas, sube archivos (Hoja de Vida y
+ * Certificaciones) a Azure Blob Storage de forma organizada y envía un correo de bienvenida.
+ * Al finalizar, redirige al usuario a la página de inicio de sesión con mensaje de éxito.
+ * 
+ * @param prevState - El estado previo de la acción (requerido por useActionState).
+ * @param formData - El objeto FormData con todos los campos y archivos del registro (5 pasos).
+ * @returns Redirección al login en caso de éxito o un objeto con el mensaje de error para mostrar en UI.
+ */
 export async function registerAction(prevState: any, formData: FormData) {
   const rawEmail = (formData.get("correo") as string) || "";
   const email = rawEmail.trim().toLowerCase();

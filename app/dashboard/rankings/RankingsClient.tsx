@@ -4,22 +4,42 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useMemo } from "react";
 
+/**
+ * Representa la información simplificada de un proveedor para el ranking.
+ */
 interface Vendor {
+  /** ID único del proveedor. */
   id_proveedor: string;
+  /** Nombre legal de la empresa (si aplica). */
   nombre_legal: string | null;
+  /** Nombres y apellidos del proveedor. */
   nombres_apellidos: string | null;
+  /** Apex Performance Score (APS) calculado. */
   score: number | null;
+  /** Información del usuario asociado. */
   usuario: {
+    /** Nombre de usuario único. */
     username: string | null;
+    /** Foto de perfil actual. */
     pfps: {
+      /** Imagen en formato base64. */
       image_base64: string | null;
     } | null;
   };
 }
 
+/**
+ * Componente cliente para visualizar el Top 10 de proveedores.
+ * Incluye una sección de podio (puestos 1, 2 y 3) con animaciones visuales
+ * y una tabla detallada con el resto del ranking.
+ * 
+ * @param props - Lista de proveedores inicial obtenida del servidor.
+ * @returns El elemento JSX con la visualización del ranking.
+ */
 export default function RankingsClient({
   initialVendors,
 }: {
+  /** Lista de proveedores ya ordenados por puntaje. */
   initialVendors: any[];
 }) {
   const podium = useMemo(() => initialVendors.slice(0, 3), [initialVendors]);

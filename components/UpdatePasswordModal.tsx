@@ -4,11 +4,23 @@ import { useState } from "react";
 import Modal from "./Modal";
 import { updatePasswordAction } from "@/app/dashboard/profile/actions";
 
+/**
+ * Propiedades para el componente de modal de actualización de contraseña.
+ */
 interface UpdatePasswordModalProps {
+    /** Indica si el modal debe mostrarse. */
     isOpen: boolean;
+    /** Función para cerrar el modal. */
     onClose: () => void;
 }
 
+/**
+ * Componente modal que permite al usuario autenticado cambiar su contraseña actual.
+ * Incluye validaciones de longitud y coincidencia de contraseñas.
+ * 
+ * @param props - Propiedades para controlar la visibilidad y el cierre del modal.
+ * @returns El elemento JSX del modal de actualización de contraseña.
+ */
 export default function UpdatePasswordModal({ isOpen, onClose }: UpdatePasswordModalProps) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");

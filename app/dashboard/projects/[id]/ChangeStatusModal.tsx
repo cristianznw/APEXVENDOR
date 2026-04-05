@@ -15,11 +15,19 @@ const estados = [
   { value: "cancelado", label: "Cancelado" },
 ] as const;
 
+/**
+ * Componente que muestra el estado actual del proyecto como un botón y permite cambiarlo mediante un modal.
+ * 
+ * @param props - El ID del proyecto y el estado actual.
+ * @returns El elemento JSX del botón y el modal de cambio de estado.
+ */
 export default function ChangeStatusModal({
   projectId,
   currentStatus,
 }: {
+  /** ID único del proyecto. */
   projectId: string;
+  /** Estado actual del proyecto (ej: 'en curso', 'pausado'). */
   currentStatus: string;
 }) {
   const [open, setOpen] = useState(false);

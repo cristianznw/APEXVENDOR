@@ -2,6 +2,12 @@
 
 import { db } from "@/lib/db";
 
+/**
+ * Obtiene los registros de inicio de sesión de todos los usuarios.
+ * Mapea la información del usuario, sus roles y datos de perfil para auditoría.
+ * 
+ * @returns Una lista de objetos con la fecha de acceso, correo, usuario, nombre y rol.
+ */
 export async function getLoginLogs() {
   try {
     const users = await db.usuario.findMany({
@@ -52,6 +58,12 @@ export async function getLoginLogs() {
   }
 }
 
+/**
+ * Obtiene un resumen detallado de todos los proyectos en la plataforma.
+ * Incluye información de los miembros (proveedores) y su rol en cada proyecto.
+ * 
+ * @returns Una lista de proyectos con su stack tecnológico, estado y miembros asociados.
+ */
 export async function getProjectsSummary() {
   try {
     const projects = await db.proyecto.findMany({
@@ -94,6 +106,12 @@ export async function getProjectsSummary() {
   }
 }
 
+/**
+ * Obtiene registros de auditoría detallados basados en las evaluaciones de los proveedores.
+ * Calcula los mejores y peores desempeños, promedios por métrica y genera registros para exportación CSV.
+ * 
+ * @returns Un objeto con los mejores/peores puntajes, promedios de métricas y registros crudos.
+ */
 export async function getAuditRecords() {
   try {
     const evaluations = await db.evaluacion.findMany({
@@ -212,6 +230,12 @@ export async function getAuditRecords() {
   }
 }
 
+/**
+ * Genera un "Log Maestro" con toda la información consolidada de los usuarios y proveedores.
+ * Combina datos de cuenta, roles, estado, información de contacto y participación en proyectos.
+ * 
+ * @returns Una lista exhaustiva de usuarios con todos sus atributos y métricas de desempeño.
+ */
 export async function getMasterLog() {
   try {
     const users = await db.usuario.findMany({

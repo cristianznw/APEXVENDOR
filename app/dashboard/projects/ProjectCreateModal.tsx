@@ -3,6 +3,13 @@
 import { useActionState, useEffect, useState } from "react";
 import { createProjectAction } from "./actions";
 
+/**
+ * Componente modal para la creación de nuevos proyectos.
+ * Proporciona un formulario para registrar los detalles básicos del proyecto como cliente, nombre, descripción,
+ * fechas de inicio/fin y estado inicial.
+ * 
+ * @returns El elemento JSX con el botón de apertura y el modal de creación.
+ */
 export default function ProjectCreateModal() {
     const [open, setOpen] = useState(false);
     const [state, formAction, pending] = useActionState(createProjectAction, null);

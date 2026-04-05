@@ -3,9 +3,18 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
+/**
+ * Plantilla de animación para las rutas de login.
+ * Utiliza `AnimatePresence` de `framer-motion` para proporcionar transiciones suaves
+ * de entrada y salida entre las diferentes vistas del flujo de autenticación.
+ * 
+ * @param props - Contiene los elementos hijos a animar.
+ * @returns El elemento JSX envuelto en animaciones de transición.
+ */
 export default function LoginTemplate({
   children,
 }: {
+  /** El contenido a renderizar dentro de la plantilla animada. */
   children: React.ReactNode;
 }) {
   const pathname = usePathname();

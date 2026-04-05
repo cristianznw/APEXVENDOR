@@ -13,6 +13,17 @@ type CertUI = {
   file: File | null;
 };
 
+/**
+ * Página de registro de nuevos usuarios (proveedores).
+ * Implementa un formulario de 5 pasos que recopila:
+ * 1. Credenciales básicas y aceptación de TyC.
+ * 2. Tipo de proveedor (Persona/Empresa).
+ * 3. Información legal, de contacto y redes sociales.
+ * 4. Disponibilidad horaria y días de servicio.
+ * 5. Documentación legal (Hoja de Vida y Certificaciones).
+ * 
+ * @returns El elemento JSX del flujo de inscripción con validaciones en cada paso.
+ */
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState(registerAction, null);
 
@@ -93,13 +104,22 @@ export default function RegisterPage() {
     return `${h12}:${m.toString().padStart(2, "0")} ${ampm}`;
   };
 
+  /**
+   * Componente selector de hora personalizado con formato de 12 horas.
+   * Permite elegir hora, minuto y periodo (AM/PM).
+   * 
+   * @param props - Propiedades: etiqueta descriptiva, valor actual y callback de cambio.
+   */
   const TimeSelector = ({
     label,
     value,
     onChange,
   }: {
+    /** Etiqueta que describe el campo (ej: 'Desde', 'Hasta'). */
     label: string;
+    /** Valor de la hora en formato 24h (HH:mm). */
     value: string;
+    /** Función callback que se ejecuta al cambiar la selección. */
     onChange: (val: string) => void;
   }) => {
     const [h, m] = value.split(":");
@@ -173,6 +193,10 @@ export default function RegisterPage() {
   const isPasswordShort = password.length > 0 && password.length < 8;
   const isPhoneShort = telefono.length > 0 && telefono.length < 10;
 
+  /**
+   * Avanza al siguiente paso del formulario realizando validaciones de campos obligatorios
+   * y lógicas específicas, como el chequeo de disponibilidad de correo electrónico.
+   */
   const next = async () => {
     if (step === 1) {
       if (

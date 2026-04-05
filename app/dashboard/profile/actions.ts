@@ -24,7 +24,7 @@ function assertPdf(file: File) {
 
 async function getSessionUsername() {
   const cookieStore = await cookies();
-  return cookieStore.get("username")?.value; // ✅ cookie unificada
+  return cookieStore.get("username")?.value;
 }
 
 async function getSessionUser() {
@@ -35,6 +35,13 @@ async function getSessionUser() {
 
 import { sendProfileUpdatedEmail } from "@/lib/mail";
 
+/**
+ * Acción de servidor para actualizar los datos personales, de contacto y redes sociales del proveedor.
+ * Envía un correo de notificación de seguridad tras la actualización exitosa.
+ *
+ * @param formData - Datos del formulario con la información del perfil a actualizar.
+ * @returns Un objeto con el resultado de la operación (éxito o mensaje de error).
+ */
 export async function updatePersonalDataAction(formData: FormData) {
   const username = await getSessionUsername();
   if (!username) return { error: "No autorizado" };
@@ -49,8 +56,6 @@ export async function updatePersonalDataAction(formData: FormData) {
       return { error: "Perfil no encontrado" };
     }
 
-    // ✅ Ahora TODO (contacto + redes) se guarda en PerfilProveedor
-    // Construimos el objeto de actualización dinámicamente según lo que venga en el formData
     const updateData: any = {};
 
     // Campos de contacto
@@ -89,7 +94,11 @@ export async function updatePersonalDataAction(formData: FormData) {
     });
 
     // Enviar correo de notificación de seguridad de manera asíncrona sin bloquear la respuesta
-    const nombreUsuario = updatedProfile.nombres_apellidos || updatedProfile.nombre_legal || user.username || "Usuario";
+    const nombreUsuario =
+      updatedProfile.nombres_apellidos ||
+      updatedProfile.nombre_legal ||
+      user.username ||
+      "Usuario";
     sendProfileUpdatedEmail(user.correo, nombreUsuario).catch(console.error);
 
     revalidatePath("/dashboard/profile");
@@ -100,6 +109,12 @@ export async function updatePersonalDataAction(formData: FormData) {
   }
 }
 
+/**
+ * Acción de servidor para actualizar la foto de perfil del usuario.
+ *
+ * @param base64Image - La nueva imagen en formato base64.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function uploadPfpAction(base64Image: string) {
   const sessionUsername = await getSessionUsername();
   if (!sessionUsername) return { error: "No autorizado" };
@@ -114,6 +129,12 @@ export async function uploadPfpAction(base64Image: string) {
   }
 }
 
+/**
+ * Acción de servidor para actualizar el resumen del portafolio del proveedor.
+ *
+ * @param content - El nuevo contenido de texto para el portafolio.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function updatePortfolioAction(content: string) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -132,7 +153,13 @@ export async function updatePortfolioAction(content: string) {
   }
 }
 
-/** SAS solo lectura para ver/descargar */
+/**
+ * Genera una URL SAS (Firma de Acceso Compartido) temporal para visualizar o descargar un documento privado.
+ * Valida que el usuario sea el dueño del documento o tenga rol de administrador.
+ *
+ * @param blobUrl - La URL permanente del blob en Azure Storage.
+ * @returns La URL temporal con el token SAS o un mensaje de error.
+ */
 export async function getSasUrlAction(blobUrl: string) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -163,12 +190,16 @@ export async function getSasUrlAction(blobUrl: string) {
       where: { url_archivo: blobUrl },
       include: {
         participacion_proveedor: {
-          select: { id_proveedor: true }
-        }
-      }
+          select: { id_proveedor: true },
+        },
+      },
     });
 
-    const ownerId = cvRecord?.id_proveedor ?? certRecord?.id_proveedor ?? contractRecord?.participacion_proveedor?.id_proveedor ?? null;
+    const ownerId =
+      cvRecord?.id_proveedor ??
+      certRecord?.id_proveedor ??
+      contractRecord?.participacion_proveedor?.id_proveedor ??
+      null;
 
     if (!ownerId) {
       return { error: "Documento no encontrado en la base de datos" };
@@ -188,7 +219,13 @@ export async function getSasUrlAction(blobUrl: string) {
   }
 }
 
-/** Subir CV (solo proveedor dueño) */
+/**
+ * Acción de servidor para subir una nueva hoja de vida (CV) en formato PDF.
+ * Elimina el CV anterior si ya existía uno registrado.
+ *
+ * @param file - El archivo PDF de la hoja de vida.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function uploadCvAction(file: File) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -246,7 +283,13 @@ export async function uploadCvAction(file: File) {
   }
 }
 
-/** Eliminar CV (solo proveedor dueño) */
+/**
+ * Acción de servidor para eliminar una hoja de vida (CV) existente.
+ * Solo puede ser realizada por el dueño del perfil.
+ *
+ * @param id_hojavida - El identificador único del registro del CV.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function deleteCvAction(id_hojavida: string) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -270,7 +313,12 @@ export async function deleteCvAction(id_hojavida: string) {
   }
 }
 
-/** Subir certificación (solo proveedor dueño) */
+/**
+ * Acción de servidor para subir una nueva certificación profesional en formato PDF.
+ *
+ * @param formData - Datos que incluyen el nombre, emisor, fechas y el archivo PDF.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function uploadCertAction(formData: FormData) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -327,7 +375,13 @@ export async function uploadCertAction(formData: FormData) {
   }
 }
 
-/** Eliminar certificación (solo proveedor dueño) */
+/**
+ * Acción de servidor para eliminar una certificación profesional.
+ * Solo puede ser realizada por el dueño del perfil.
+ *
+ * @param id_cert - El identificador único de la certificación.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function deleteCertAction(id_cert: string) {
   const user = await getSessionUser();
   if (!user) return { error: "No autorizado" };
@@ -349,10 +403,15 @@ export async function deleteCertAction(id_cert: string) {
   }
 }
 
-
-
 import bcrypt from "bcryptjs";
 
+/**
+ * Acción de servidor para actualizar el correo electrónico del usuario.
+ * Verifica la disponibilidad del nuevo correo y envía notificaciones de seguridad.
+ *
+ * @param newEmail - La nueva dirección de correo deseada.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function updateEmailAction(newEmail: string) {
   const username = await getSessionUsername();
   if (!username) return { error: "No autorizado" };
@@ -375,26 +434,31 @@ export async function updateEmailAction(newEmail: string) {
     });
 
     const userProfile = await db.perfilProveedor.findUnique({
-      where: { id_proveedor: existingUser?.id_usuario || username } // Fallback to username if existing user wasn't fetched completely
+      where: { id_proveedor: existingUser?.id_usuario || username }, // Fallback to username if existing user wasn't fetched completely
     });
 
     // We fetch user again to get the id if we didn't have it, or directly by username since id_proveedor is id_usuario
     const realUser = await db.usuario.findUnique({
       where: { username },
-      include: { perfilProveedor: true }
-    })
+      include: { perfilProveedor: true },
+    });
 
     if (realUser) {
-      const nombreUsuario = realUser.perfilProveedor?.nombres_apellidos || realUser.perfilProveedor?.nombre_legal || realUser.username || "Usuario";
+      const nombreUsuario =
+        realUser.perfilProveedor?.nombres_apellidos ||
+        realUser.perfilProveedor?.nombre_legal ||
+        realUser.username ||
+        "Usuario";
       // Enviar notificación al correo nuevo
       sendProfileUpdatedEmail(email, nombreUsuario).catch(console.error);
 
       // Enviar notificación al correo viejo (opcional pero recomendado por seguridad)
       if (realUser.correo !== email) {
-        sendProfileUpdatedEmail(realUser.correo, nombreUsuario).catch(console.error);
+        sendProfileUpdatedEmail(realUser.correo, nombreUsuario).catch(
+          console.error,
+        );
       }
     }
-
 
     revalidatePath("/dashboard/profile");
     return { success: true };
@@ -404,9 +468,17 @@ export async function updateEmailAction(newEmail: string) {
   }
 }
 
+/**
+ * Acción de servidor para cambiar la contraseña del usuario.
+ * Requiere la contraseña actual para validación y aplica hash a la nueva contraseña.
+ *
+ * @param currentPassword - La contraseña actual del usuario.
+ * @param newPassword - La nueva contraseña deseada.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function updatePasswordAction(
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ) {
   const username = await getSessionUsername();
   if (!username) return { error: "No autorizado" };
@@ -438,12 +510,18 @@ export async function updatePasswordAction(
 
     const realUser = await db.usuario.findUnique({
       where: { username },
-      include: { perfilProveedor: true }
+      include: { perfilProveedor: true },
     });
 
     if (realUser) {
-      const nombreUsuario = realUser.perfilProveedor?.nombres_apellidos || realUser.perfilProveedor?.nombre_legal || realUser.username || "Usuario";
-      sendProfileUpdatedEmail(realUser.correo, nombreUsuario).catch(console.error);
+      const nombreUsuario =
+        realUser.perfilProveedor?.nombres_apellidos ||
+        realUser.perfilProveedor?.nombre_legal ||
+        realUser.username ||
+        "Usuario";
+      sendProfileUpdatedEmail(realUser.correo, nombreUsuario).catch(
+        console.error,
+      );
     }
 
     return { success: true };
@@ -453,7 +531,13 @@ export async function updatePasswordAction(
   }
 }
 
-/** Eliminar Contrato de Participación (Solo Admin) */
+/**
+ * Acción de servidor para eliminar un contrato de participación de un proyecto.
+ * Acción restringida únicamente a usuarios con rol de administrador.
+ *
+ * @param id_contrato - El identificador único del contrato.
+ * @returns Un objeto indicando el éxito o error de la operación.
+ */
 export async function deleteAgreementAction(id_contrato: string) {
   const username = await getSessionUsername();
   if (!username) return { error: "No autorizado" };
@@ -464,9 +548,14 @@ export async function deleteAgreementAction(id_contrato: string) {
       include: { roles: { include: { rol: true } } },
     });
 
-    const isAdmin = userWithRoles?.roles.some((r: any) => r.rol.nombre === "Admin");
+    const isAdmin = userWithRoles?.roles.some(
+      (r: any) => r.rol.nombre === "Admin",
+    );
     if (!isAdmin) {
-      return { error: "No autorizado. Solo administradores pueden eliminar contratos de participación." };
+      return {
+        error:
+          "No autorizado. Solo administradores pueden eliminar contratos de participación.",
+      };
     }
 
     const contract = await db.contrato_participacion.findUnique({
@@ -484,7 +573,7 @@ export async function deleteAgreementAction(id_contrato: string) {
     });
 
     revalidatePath("/dashboard/profile");
-    // Notar: revalidatePath de proyecto se encargará el usuario al navegar o mediante tags si fuera necesario, 
+    // Notar: revalidatePath de proyecto se encargará el usuario al navegar o mediante tags si fuera necesario,
     // pero por ahora profile es suficiente para pruebas.
     return { success: true };
   } catch (e: any) {

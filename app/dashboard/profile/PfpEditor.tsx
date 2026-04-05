@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { uploadPfpAction } from "./actions";
 
+/**
+ * Componente editor para la foto de perfil (PFP).
+ * Permite al usuario seleccionar una imagen local, validarla y subirla al servidor en formato base64.
+ * 
+ * @param props - Incluye la URL de la imagen actual ('currentImage').
+ * @returns El elemento JSX con la previsualización y el input de carga.
+ */
 export default function PfpEditor({ currentImage }: { currentImage: string }) {
   const [loading, setLoading] = useState(false);
 

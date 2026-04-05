@@ -2,13 +2,13 @@
 
 import PfpEditor from "@/app/dashboard/profile/PfpEditor";
 import {
+  deleteAgreementAction,
   deleteCertAction,
   deleteCvAction,
   getSasUrlAction,
   updatePortfolioAction,
   uploadCertAction,
   uploadCvAction,
-  deleteAgreementAction,
 } from "@/app/dashboard/profile/actions";
 import { useEffect, useState } from "react";
 import Modal from "../Modal";
@@ -19,6 +19,12 @@ import { useRouter } from "next/navigation";
 import { assignVendorFromProfileAction } from "@/app/dashboard/vendors/actions";
 import AssignToProjectModal from "./AssignToProjectModal";
 
+/**
+ * Formatea una cadena de hora (HH:mm) al formato de 12 horas (AM/PM).
+ *
+ * @param time - Hora en formato 'HH:mm'.
+ * @returns Hora formateada (ej: '08:00 AM') o '--:--' si no es válida.
+ */
 const format12h = (time: string) => {
   if (!time) return "--:--";
   const [h, m] = time.split(":").map(Number);
@@ -27,13 +33,29 @@ const format12h = (time: string) => {
   return `${h12}:${m.toString().padStart(2, "0")} ${ampm}`;
 };
 
+/**
+ * Vista detallada del perfil del proveedor.
+ * Este componente es el núcleo de la visualización del perfil y permite:
+ * - Ver y editar el resumen del portafolio con efecto de máquina de escribir.
+ * - Gestionar la foto de perfil y datos de contacto.
+ * - Visualizar el Apex Performance Score.
+ * - Administrar documentos (CVs y Certificaciones).
+ * - Consultar proyectos asignados y sus evaluaciones.
+ * - Asignar proyectos (solo para administradores).
+ *
+ * @param props - Perfil completo, flag de visualización administrativa y proyectos disponibles.
+ * @returns El elemento JSX de la vista integral del perfil.
+ */
 export default function ProfileView({
   profile,
   isAdminViewing = false,
   availableProjects = [],
 }: {
+  /** Perfil completo recuperado del servicio. */
   profile: any;
+  /** Indica si quien visualiza es un administrador (habilita herramientas de gestión). */
   isAdminViewing?: boolean;
+  /** Lista de proyectos disponibles para asignación (usado por admins). */
   availableProjects?: any[];
 }) {
   const router = useRouter();
@@ -216,9 +238,9 @@ export default function ProfileView({
               <span className="text-[#252525] font-bold text-lg">
                 {hasMounted && profile.user.lastLogin
                   ? new Date(profile.user.lastLogin).toLocaleString("es-CO", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
                   : profile.user.lastLogin
                     ? "..."
                     : "Nunca"}
@@ -231,9 +253,9 @@ export default function ProfileView({
               <span className="text-[#252525] font-bold text-lg">
                 {hasMounted && profile.user.lastUpdated
                   ? new Date(profile.user.lastUpdated).toLocaleString("es-CO", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
                   : profile.user.lastUpdated
                     ? "..."
                     : "Desconocida"}
@@ -295,10 +317,11 @@ export default function ProfileView({
               <button
                 onClick={handleSavePortfolio}
                 disabled={isSaving}
-                className={`text-[9px] font-black uppercase tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg ${isSaving
-                  ? "bg-green-500 text-white scale-95"
-                  : "bg-[#252525] text-[#e9d26a] hover:bg-black active:scale-95"
-                  }`}
+                className={`text-[9px] font-black uppercase tracking-widest px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg ${
+                  isSaving
+                    ? "bg-green-500 text-white scale-95"
+                    : "bg-[#252525] text-[#e9d26a] hover:bg-black active:scale-95"
+                }`}
               >
                 {isSaving ? "✓ Guardado" : "💾 Actualizar"}
               </button>
@@ -619,12 +642,13 @@ export default function ProfileView({
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-[9px] flex-none font-black uppercase tracking-widest ${proj.project.status === "en curso"
-                        ? "bg-green-100 text-green-700"
-                        : proj.project.status === "completado"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-600"
-                        }`}
+                      className={`px-3 py-1 rounded-full text-[9px] flex-none font-black uppercase tracking-widest ${
+                        proj.project.status === "en curso"
+                          ? "bg-green-100 text-green-700"
+                          : proj.project.status === "completado"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-gray-100 text-gray-600"
+                      }`}
                     >
                       {proj.project.status || "Definido"}
                     </span>
@@ -693,7 +717,9 @@ export default function ProfileView({
                           <button
                             onClick={async () => {
                               if (!confirm("¿Eliminar este contrato?")) return;
-                              const res = await deleteAgreementAction(proj.contract.id);
+                              const res = await deleteAgreementAction(
+                                proj.contract.id,
+                              );
                               if (res?.error) alert(res.error);
                               else router.refresh();
                             }}
@@ -724,7 +750,9 @@ export default function ProfileView({
                                 Por: @{proj.evaluation.evaluatorUsername}
                               </span>
                               <span className="text-[9px] font-bold text-gray-400/80 uppercase tracking-widest block mt-0.5">
-                                {new Date(proj.evaluation.date).toLocaleDateString("es-CO", {
+                                {new Date(
+                                  proj.evaluation.date,
+                                ).toLocaleDateString("es-CO", {
                                   dateStyle: "short",
                                 })}
                               </span>
@@ -1016,10 +1044,11 @@ export default function ProfileView({
                             : ""}
                         </div>
                         <div
-                          className={`text-[10px] font-black uppercase tracking-widest mt-2 inline-block px-3 py-1 rounded-full ${vigente
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                            }`}
+                          className={`text-[10px] font-black uppercase tracking-widest mt-2 inline-block px-3 py-1 rounded-full ${
+                            vigente
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                         >
                           {vigente ? "Vigente" : "Expirada"}
                         </div>
@@ -1076,6 +1105,6 @@ export default function ProfileView({
         availableProjects={availableProjects}
         assignAction={assignVendorFromProfileAction}
       />
-    </div >
+    </div>
   );
 }

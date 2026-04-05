@@ -4,6 +4,15 @@ import { db } from "@/lib/db";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import crypto from "crypto";
 
+/**
+ * Inicia el proceso de recuperación de contraseña.
+ * Genera un token de seguridad único, lo almacena en la base de datos (con expiración)
+ * y envía un correo electrónico al usuario con las instrucciones de restablecimiento.
+ * Por seguridad, siempre retorna éxito incluso si el correo no existe.
+ * 
+ * @param formData - Contiene el 'email' del usuario solicitante.
+ * @returns Un objeto indicando el éxito de la solicitud o un mensaje de error.
+ */
 export async function requestPasswordResetAction(formData: FormData) {
     const email = (formData.get("email") as string)?.trim().toLowerCase();
 

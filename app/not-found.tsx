@@ -1,5 +1,12 @@
 import Link from "next/link";
 
+/**
+ * Página de Error 404 (No Encontrado).
+ * Se muestra automáticamente cuando un usuario intenta acceder a una ruta que no existe.
+ * Diseño futurista con el estilo visual de ApexVendor para mantener la inmersión.
+ * 
+ * @returns El elemento JSX con el mensaje de página no encontrada.
+ */
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-4 relative overflow-hidden">

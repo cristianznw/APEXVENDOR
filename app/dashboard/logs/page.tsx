@@ -24,35 +24,67 @@ import {
   getProjectsSummary,
 } from "./actions";
 
+/**
+ * Representa una entrada individual en los registros de acceso.
+ */
 interface LogEntry {
+  /** Fecha en formato ISO o 'Nunca' si no hay registro. */
   fecha: string;
+  /** Correo electrónico del usuario. */
   correo: string;
+  /** Nombre de usuario único. */
   usuario: string;
+  /** Nombre completo o razón social del usuario/proveedor. */
   nombre: string;
+  /** Rol asignado (ej: 'Admin', 'Proveedor'). */
   rol: string;
 }
 
+/**
+ * Representa a un miembro participante de un proyecto.
+ */
 interface ProjectMember {
+  /** Nombre del miembro. */
   nombre: string;
+  /** Rol específico dentro del proyecto. */
   rol: string;
 }
 
+/**
+ * Representa la información detallada de un proyecto para los tableros de control.
+ */
 interface Project {
+  /** Identificador único del proyecto. */
   id: string;
+  /** Nombre del proyecto. */
   nombre: string;
+  /** Nombre del cliente asociado. */
   cliente: string;
+  /** Descripción del alcance del proyecto. */
   descripcion: string;
+  /** Tecnologías y herramientas utilizadas. */
   stack: string;
+  /** Estado actual (ej: 'En Curso', 'Completado'). */
   estado: string;
+  /** Fecha de inicio. */
   inicio: string | null;
+  /** Fecha de finalización estimada o real. */
   fin: string | null;
+  /** Lista de miembros asignados al proyecto. */
   miembros: ProjectMember[];
 }
 
+/**
+ * Estructura de datos consolidada para reportes de auditoría y desempeño.
+ */
 interface AuditData {
+  /** Los 3 proveedores con mejor puntaje. */
   best: { name: string; score: number }[];
+  /** Los 3 proveedores con menor puntaje. */
   worst: { name: string; score: number }[];
+  /** Promedios generales agrupados por métrica de evaluación. */
   metricAverages: { name: string; score: number; providerCount: number }[];
+  /** Registros crudos detallados para exportación. */
   rawRecords: {
     fecha: string;
     proveedor: string;
@@ -99,6 +131,13 @@ const getSlotIndex = (dateStr: string) => {
 
 // --- COMPONENTS ---
 
+/**
+ * Componente visual que renderiza un gráfico de dona interactivo utilizando SVG y Framer Motion.
+ * Permite visualizar distribuciones porcentuales en los tableros.
+ * 
+ * @param props - Datos de las rebanadas y el título del gráfico.
+ * @returns El elemento JSX del gráfico circular.
+ */
 const DonutChart = ({
   data,
   title,
@@ -199,6 +238,16 @@ const DonutChart = ({
   );
 };
 
+/**
+ * Página principal de Dashboards y Reportes (Logs).
+ * Proporciona una interfaz rica e interactiva con múltiples pestañas para:
+ * 1. Monitorear la actividad de conexión en tiempo real.
+ * 2. Analizar el estado y recursos de los proyectos.
+ * 3. Auditar el desempeño de los proveedores mediante métricas.
+ * 4. Exportar reportes maestros en formato CSV.
+ * 
+ * @returns El elemento JSX de la página de logs y estadísticas.
+ */
 export default function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);

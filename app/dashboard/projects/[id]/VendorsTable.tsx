@@ -15,6 +15,18 @@ import { getSasUrlAction, deleteAgreementAction } from "@/app/dashboard/profile/
 
 type ActionState = { success?: boolean; error?: string } | null;
 
+/**
+ * Tabla dinámica que lista los proveedores asignados a un proyecto.
+ * Permite a los administradores:
+ * - Asignar nuevos proveedores mediante un modal.
+ * - Editar los roles y fechas de participación existentes.
+ * - Quitar proveedores del proyecto.
+ * - Acceder a la evaluación de desempeño una vez finalizada la participación.
+ * - Visualizar contratos adjuntos con URLs seguras (SAS).
+ * 
+ * @param props - Datos de participación, proveedores disponibles, estado del proyecto y métricas de evaluación.
+ * @returns El elemento JSX con la lista de proveedores y controles de gestión.
+ */
 export default function VendorsTable({
   projectId,
   participants,
@@ -24,12 +36,19 @@ export default function VendorsTable({
   currentUserId,
   isAdmin,
 }: {
+  /** ID del proyecto actual. */
   projectId: string;
+  /** Lista de proveedores actualmente con participación en el proyecto. */
   participants: any[];
+  /** Lista de todos los proveedores disponibles para ser asignados. */
   providers: any[];
+  /** Estado actual del proyecto (ej: 'en curso', 'completado'). */
   projectStatus?: string;
+  /** Métricas de evaluación configuradas en el sistema. */
   metrics: any[];
+  /** ID del usuario actual (evaluador). */
   currentUserId: string;
+  /** Indica si el usuario tiene permisos de administrador. */
   isAdmin?: boolean;
 }) {
   const router = useRouter();
@@ -47,6 +66,11 @@ export default function VendorsTable({
     FormData
   >(removeVendorAction, null);
 
+  /**
+   * Abre un archivo almacenado en el blob storage utilizando una URL de acceso seguro (SAS).
+   * 
+   * @param blobUrl - La URL interna del archivo en el storage.
+   */
   const openWithSas = async (blobUrl: string) => {
     const res = await getSasUrlAction(blobUrl);
     if (res?.error) return alert(res.error);
@@ -81,7 +105,14 @@ export default function VendorsTable({
     </button>
   );
 
-  // Helper para saber si se puede evaluar
+  /**
+   * Determina si un proveedor es elegible para ser evaluado.
+   * La evaluación se habilita si el proyecto está completado o si la participación del proveedor ha finalizado,
+   * siempre y cuando no haya sido evaluado previamente.
+   * 
+   * @param participant - Datos de la participación del proveedor.
+   * @returns Un booleano indicando si la evaluación está permitida.
+   */
   const canEvaluate = (participant: any) => {
     const isProjectCompleted = projectStatus?.toLowerCase() === "completado";
     const isParticipationEnded =

@@ -5,6 +5,14 @@ import { useActionState, useEffect, useState } from "react";
 
 type ActionState = { success?: boolean; error?: string } | null;
 
+/**
+ * Componente modal para asignar un proveedor a un proyecto específico.
+ * Incluye un buscador de proveedores para facilitar la selección.
+ * Permite definir el rol, las fechas de participación y adjuntar un contrato en PDF.
+ * 
+ * @param props - Incluye estado de apertura, callbacks, ID del proyecto, lista de proveedores y la acción de asignación.
+ * @returns El elemento JSX del modal de asignación de proveedores.
+ */
 export default function AssignVendorModal({
   open,
   onClose,
@@ -13,11 +21,17 @@ export default function AssignVendorModal({
   providers,
   assignAction,
 }: {
+  /** Indica si el modal está visible. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Callback opcional tras una asignación exitosa. */
   onSuccess?: () => void;
+  /** ID del proyecto actual. */
   projectId: string;
+  /** Lista de proveedores disponibles para asignar. */
   providers: any[];
+  /** Acción de servidor para ejecutar la asignación. */
   assignAction: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(

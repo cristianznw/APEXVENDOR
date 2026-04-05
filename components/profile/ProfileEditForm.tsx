@@ -3,12 +3,26 @@
 import { updatePersonalDataAction, updateEmailAction, updatePasswordAction } from "@/app/dashboard/profile/actions";
 import { useState } from "react";
 
+/**
+ * Propiedades para el componente ProfileEditForm.
+ */
 interface ProfileEditFormProps {
+  /** Objeto con la información completa del perfil del proveedor. */
   profile: any;
+  /** Callback que se ejecuta tras una actualización exitosa de datos. */
   onSuccess: () => void;
+  /** Modo de edición actual: datos de contacto, redes sociales o configuración de cuenta. */
   mode: "contact" | "social" | "settings";
 }
 
+/**
+ * Formulario dinámico para la edición del perfil de usuario/proveedor.
+ * Soporta múltiples modos de edición (contacto, redes sociales, seguridad).
+ * Gestiona validaciones locales y llamadas a acciones de servidor.
+ * 
+ * @param props - Datos del perfil, callback de éxito y modo de operación.
+ * @returns El elemento JSX del formulario de edición.
+ */
 export default function ProfileEditForm({
   profile,
   onSuccess,

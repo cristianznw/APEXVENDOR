@@ -5,6 +5,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import ProjectCreateModal from "./ProjectCreateModal";
 
+/**
+ * Página principal de Gestión de Proyectos.
+ * Lista todos los proyectos registrados en el sistema para usuarios con rol 'Admin'.
+ * Permite acceder al detalle de cada proyecto y abrir el modal de creación.
+ * 
+ * @returns El elemento JSX de la página de administración de proyectos.
+ */
 export default async function ProjectsPage() {
   const cookieStore = await cookies();
   const username = cookieStore.get("username")?.value;

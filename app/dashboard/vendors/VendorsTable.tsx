@@ -8,9 +8,22 @@ import { toggleVendorStatusAction } from "./actions";
 type SortField = "nombres_apellidos" | "ciudad" | "score";
 type SortOrder = "asc" | "desc";
 
+/**
+ * Tabla principal para la gestión de proveedores en el dashboard administrativo.
+ * Proporciona funcionalidades avanzadas de:
+ * - Búsqueda global por nombre, NIT o usuario.
+ * - Filtrado por ciudad y score mínimo (Apex Performance Score).
+ * - Ordenamiento dinámico por campos clave.
+ * - Gestión de estado de cuenta (Activar/Desactivar).
+ * - Acceso directo al perfil detallado de cada proveedor.
+ * 
+ * @param props - Lista inicial de proveedores obtenida del servidor.
+ * @returns El elemento JSX con la interfaz de filtros y la tabla de datos.
+ */
 export default function VendorsTable({
   initialVendors,
 }: {
+  /** Arreglo con los datos completos de los proveedores. */
   initialVendors: any[];
 }) {
   const [query, setQuery] = useState("");
@@ -27,6 +40,11 @@ export default function VendorsTable({
     return Array.from(new Set(allCities)).sort();
   }, [initialVendors]);
 
+  /**
+   * Gestiona el cambio de campo de ordenamiento o la inversión de la dirección (ASC/DESC).
+   * 
+   * @param field - El campo por el cual se desea ordenar la tabla.
+   */
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");

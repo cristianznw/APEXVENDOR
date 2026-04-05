@@ -11,6 +11,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+/**
+ * Envía un correo electrónico de bienvenida a un nuevo usuario.
+ * 
+ * @param email - La dirección de correo electrónico del destinatario.
+ * @param name - El nombre del usuario para personalizar el saludo.
+ * @returns Una promesa que se resuelve tras el intento de envío.
+ */
 export const sendWelcomeEmail = async (email: string, name: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -101,6 +108,13 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   }
 };
 
+/**
+ * Envía un correo electrónico con un enlace para restablecer la contraseña.
+ * 
+ * @param email - La dirección de correo electrónico del usuario.
+ * @param token - El token único generado para validar la solicitud de restablecimiento.
+ * @returns Una promesa que se resuelve tras el intento de envío.
+ */
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const resetUrl = `${baseUrl}/reset-password?token=${token}`;
@@ -191,6 +205,13 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
   }
 };
 
+/**
+ * Envía una notificación de seguridad cuando se actualizan los datos del perfil de un usuario.
+ * 
+ * @param email - La dirección de correo electrónico del usuario.
+ * @param name - El nombre del usuario.
+ * @returns Una promesa que se resuelve tras el intento de envío.
+ */
 export const sendProfileUpdatedEmail = async (email: string, name: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const resetUrl = `${baseUrl}/forgot-password`;

@@ -1,9 +1,19 @@
 import Navbar from "@/components/Navbar";
 import { cookies } from "next/headers";
 
+/**
+ * Layout principal para la sección del Dashboard.
+ * Este componente envuelve todas las páginas del dashboard, proporcionando el Navbar superior
+ * y un contenedor principal con el estilo visual base del sistema.
+ * Recupera la información de sesión (username y rol) de las cookies para la navegación.
+ * 
+ * @param props - Contiene los elementos hijos (páginas y componentes internos).
+ * @returns El elemento JSX con la estructura compartida del dashboard.
+ */
 export default async function DashboardLayout({
   children,
 }: {
+  /** El contenido de la página actual a renderizar. */
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();

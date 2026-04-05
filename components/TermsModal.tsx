@@ -1,8 +1,17 @@
+/**
+ * Componente que muestra los términos y condiciones legales para los proveedores.
+ * Requiere que el usuario acepte o rechace para continuar con el proceso de registro.
+ * 
+ * @param props - Contiene las funciones callback 'onAccept' y 'onReject'.
+ * @returns El elemento JSX del modal de términos y condiciones.
+ */
 export default function TermsModal({
   onAccept,
   onReject,
 }: {
+  /** Función que se ejecuta cuando el usuario acepta los términos. */
   onAccept: () => void;
+  /** Función que se ejecuta cuando el usuario rechaza los términos. */
   onReject: () => void;
 }) {
   return (

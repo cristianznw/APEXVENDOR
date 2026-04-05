@@ -20,6 +20,14 @@ async function assertAdminByUsername(username: string) {
     return { user, isAdmin: !!isAdmin };
 }
 
+/**
+ * Acción de servidor para crear un nuevo proyecto.
+ * Realiza validaciones de permisos (solo Admin) y de integridad de datos (fechas, campos obligatorios).
+ * 
+ * @param prevState - Estado anterior de la acción (usado con useActionState).
+ * @param formData - Datos del formulario con la información del nuevo proyecto.
+ * @returns Un objeto indicando éxito o un mensaje de error detallado.
+ */
 export async function createProjectAction(prevState: any, formData: FormData) {
     const username = await getSessionUsername();
     if (!username) return { error: "No autorizado" };
@@ -69,6 +77,14 @@ export async function createProjectAction(prevState: any, formData: FormData) {
     }
 }
 
+/**
+ * Acción de servidor para actualizar el estado de un proyecto existente.
+ * Permite cambiar entre estados como 'planificado', 'en curso', 'completado', etc.
+ * 
+ * @param prevState - Estado anterior de la acción.
+ * @param formData - Contiene el 'id_proyecto' y el nuevo 'estado'.
+ * @returns Un objeto indicando éxito o un mensaje de error.
+ */
 export async function updateProjectStatusAction(prevState: any, formData: FormData) {
   const username = await getSessionUsername();
   if (!username) return { error: "No autorizado" };

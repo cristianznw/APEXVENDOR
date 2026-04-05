@@ -4,16 +4,33 @@ import { useState, useTransition } from "react";
 import Modal from "@/components/Modal";
 import { createMetricAction, deleteMetricAction } from "./actions";
 
+/**
+ * Interfaz genérica para una métrica de evaluación.
+ */
 interface GenericMetric {
+    /** Identificador único de la métrica. */
     id_metrica: string;
+    /** Nombre descriptivo de la métrica. */
     nombre: string;
+    /** Notas o descripción adicional opcional. */
     notas: string | null;
 }
 
+/**
+ * Propiedades para el componente de modal de creación de métricas.
+ */
 interface CreateMetricModalProps {
+    /** Lista opcional de métricas iniciales para mostrar en el listado. */
     initialMetrics?: GenericMetric[];
 }
 
+/**
+ * Componente modal que permite a los administradores crear, visualizar y eliminar métricas de evaluación.
+ * Utiliza transiciones de React para manejar las acciones de servidor de forma fluida.
+ * 
+ * @param props - Propiedades que incluyen las métricas iniciales.
+ * @returns El elemento JSX con el botón de apertura y el modal de gestión de métricas.
+ */
 export default function CreateMetricModal({
     initialMetrics = [],
 }: CreateMetricModalProps) {

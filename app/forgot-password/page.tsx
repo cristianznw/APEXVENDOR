@@ -3,6 +3,13 @@
 import { useActionState, useState } from "react";
 import { requestPasswordResetAction } from "./actions";
 
+/**
+ * Página de solicitud de recuperación de contraseña.
+ * Permite a los usuarios ingresar su correo electrónico para recibir un enlace de restablecimiento.
+ * Maneja estados de carga, error y éxito mediante `useActionState`.
+ * 
+ * @returns El elemento JSX del formulario de recuperación de contraseña.
+ */
 export default function ForgotPasswordPage() {
     const [state, formAction, pending] = useActionState(
         async (prevState: any, formData: FormData) => {

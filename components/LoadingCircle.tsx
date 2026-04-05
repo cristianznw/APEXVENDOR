@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Componente que muestra una animación de carga circular con estilo tecnológico.
+ * Utiliza clases de Tailwind para la animación de rotación y efectos visuales.
+ * 
+ * @returns El elemento JSX con la animación de carga.
+ */
 export default function LoadingCircle() {
   return (
     <div className="flex items-center justify-center w-full h-full min-h-[200px]">

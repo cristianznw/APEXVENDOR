@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 import { uploadToAzureBlob } from "@/lib/azureBlob";
 
+/**
+ * Estados posibles de un proyecto.
+ */
 export type ProjectStatus =
   | "planificado"
   | "en curso"
@@ -36,7 +39,16 @@ const allowedTransitions: Record<ProjectStatus, ProjectStatus[]> = {
   cancelado: [],
 };
 
+/**
+ * Servicio para la gestión de proyectos, participantes y evaluaciones.
+ */
 export const projectService = {
+  /**
+   * Crea un nuevo proyecto en la base de datos.
+   * 
+   * @param data - Los datos del proyecto a crear.
+   * @returns El proyecto creado.
+   */
   async createProject(data: CreateProjectInput) {
     // inicio obligatorio
     if (!data.inicio) throw new Error("La fecha de inicio es obligatoria.");
@@ -54,18 +66,35 @@ export const projectService = {
     });
   },
 
+  /**
+   * Lista todos los proyectos ordenados por fecha de inicio descendente.
+   * 
+   * @returns Una lista de todos los proyectos.
+   */
   async listProjects() {
     return await db.proyecto.findMany({
       orderBy: [{ inicio: "desc" }],
     });
   },
 
+  /**
+   * Obtiene un proyecto por su identificador único.
+   * 
+   * @param id_proyecto - El ID del proyecto.
+   * @returns El proyecto encontrado o null.
+   */
   async getProjectById(id_proyecto: string) {
     return await db.proyecto.findUnique({
       where: { id_proyecto },
     });
   },
 
+  /**
+   * Lista los participantes de un proyecto específico, incluyendo evaluaciones y contratos.
+   * 
+   * @param id_proyecto - El ID del proyecto.
+   * @returns Una lista de participantes con sus detalles.
+   */
   async listProjectParticipants(id_proyecto: string) {
     const participants = await db.participacion_proveedor.findMany({
       where: { id_proyecto },
@@ -93,6 +122,12 @@ export const projectService = {
     }));
   },
 
+  /**
+   * Lista los proveedores disponibles para ser asignados a un proyecto (excluyendo los ya asignados).
+   * 
+   * @param id_proyecto - El ID del proyecto.
+   * @returns Una lista de proveedores no suspendidos y no asignados aún.
+   */
   async listProvidersForAssign(id_proyecto: string) {
     const assigned = await db.participacion_proveedor.findMany({
       where: { id_proyecto },
@@ -117,6 +152,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Actualiza los datos básicos de un proyecto.
+   * 
+   * @param data - Los nuevos datos del proyecto.
+   * @returns El proyecto actualizado.
+   */
   async updateProject(data: UpdateProjectInput) {
     if (!data.inicio) throw new Error("La fecha de inicio es obligatoria.");
 
@@ -133,6 +174,13 @@ export const projectService = {
     });
   },
 
+  /**
+   * Actualiza el estado de un proyecto validando las transiciones permitidas.
+   * 
+   * @param id_proyecto - El ID del proyecto.
+   * @param nextStatus - El nuevo estado al que se desea cambiar.
+   * @returns El proyecto con el nuevo estado.
+   */
   async updateProjectStatus(id_proyecto: string, nextStatus: ProjectStatus) {
     const project = await db.proyecto.findUnique({ where: { id_proyecto } });
     if (!project) throw new Error("Proyecto no encontrado.");
@@ -153,6 +201,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Actualiza la información de asignación de un proveedor en un proyecto.
+   * 
+   * @param params - Parámetros de actualización (id_participacion, rol, fechas).
+   * @returns La participación actualizada.
+   */
   async updateVendorAssignment(params: {
     id_participacion: string;
     rol_en_proyecto: string;
@@ -189,6 +243,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Asigna un proveedor a un proyecto, opcionalmente cargando un contrato.
+   * 
+   * @param params - Detalles de la asignación y archivo de contrato.
+   * @returns La participación creada.
+   */
   async assignVendorToProject(params: {
     id_proyecto: string;
     id_proveedor: string;
@@ -277,6 +337,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Elimina un proveedor de un proyecto y recalcula su puntaje (score) si tenía evaluación.
+   * 
+   * @param id_participacion - El ID de la participación a eliminar.
+   * @returns El registro de participación eliminado.
+   */
   async removeVendorFromProject(id_participacion: string) {
     const participacion = await db.participacion_proveedor.findUnique({
       where: { id_participacion },
@@ -336,6 +402,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Elimina un proyecto por completo.
+   * 
+   * @param id_proyecto - El ID del proyecto a eliminar.
+   * @returns El registro del proyecto eliminado.
+   */
   async deleteProject(id_proyecto: string) {
     // Nota: por FK ON DELETE CASCADE, se borran participaciones, evaluaciones, etc.
     // FUTURO: antes de borrar aquí es donde iría “borrar contratos del blob” si tuvieras contenedor.
@@ -344,6 +416,12 @@ export const projectService = {
     });
   },
 
+  /**
+   * Guarda una evaluación para un proveedor en un proyecto y actualiza su score global.
+   * 
+   * @param data - Datos de la evaluación (participación, evaluador, comentarios, métricas).
+   * @returns El registro de evaluación creado.
+   */
   async saveEvaluation(data: {
     id_participacion: string;
     evaluador: string; // id_usuario

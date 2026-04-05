@@ -2,9 +2,13 @@
 import crypto from "crypto";
 
 /**
- * Genera un token de nombre de usuario pseudo-único.
- * Basado en la lógica de registerstuff.py.
- * El formato es: "{base}-{name}-{hashprefix}".
+ * Genera un nombre de usuario pseudo-único basado en el nombre proporcionado.
+ * Sigue el formato: "{base}-{primer_nombre}-{hash_corto}".
+ * 
+ * @param name - El nombre completo o parcial del usuario.
+ * @param base - Prefijo base para el nombre de usuario (por defecto "p").
+ * @param length - Longitud del hash que se incluirá al final (por defecto 8).
+ * @returns El nombre de usuario generado en minúsculas.
  */
 export function generateUsername(
   name: string = "user",

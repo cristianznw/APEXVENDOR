@@ -5,6 +5,13 @@ import VendorsTable from "./VendorsTable";
 import CreateAdminButton from "./CreateAdminButton";
 import AdminListModal from "./AdminListModal";
 
+/**
+ * Página principal del Directorio de Proveedores (Panel Administrativo).
+ * Realiza la verificación de rol 'Admin' y recupera la lista completa de proveedores y administradores.
+ * Permite la gestión centralizada de cuentas, creación de nuevos admins y auditoría de registros.
+ * 
+ * @returns El elemento JSX de la página de gestión de proveedores.
+ */
 export default async function VendorsPage() {
   const cookieStore = await cookies();
   const username = cookieStore.get("username")?.value;

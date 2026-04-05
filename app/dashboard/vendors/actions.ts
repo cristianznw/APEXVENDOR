@@ -5,6 +5,13 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
+/**
+ * Acción de servidor para crear un nuevo usuario con rol Administrador.
+ * Realiza validaciones de permisos, integridad de datos (username, correo único) y fortaleza de contraseña.
+ * 
+ * @param formData - Datos del formulario (username, correo, password, confirm).
+ * @returns Un objeto con el resultado de la operación (éxito o mensaje de error).
+ */
 export async function createAdminAction(formData: FormData) {
   const cookieStore = await cookies();
   const sessionUsername = cookieStore.get("username")?.value;
@@ -99,6 +106,14 @@ export async function createAdminAction(formData: FormData) {
 
 import { projectService } from "@/services/projectService";
 
+/**
+ * Acción de servidor para asignar un proveedor a un proyecto desde su perfil público.
+ * Permite a los administradores vincular rápidamente a un proveedor con un proyecto existente.
+ * 
+ * @param prev - Estado anterior.
+ * @param formData - Datos de la asignación (id_proyecto, id_proveedor, rol, fechas, camino actual).
+ * @returns Un objeto indicando el éxito de la operación.
+ */
 export async function assignVendorFromProfileAction(
   prev: any,
   formData: FormData,
@@ -141,6 +156,13 @@ export async function assignVendorFromProfileAction(
   }
 }
 
+/**
+ * Acción de servidor para alternar el estado de la cuenta de un usuario (Activo/Suspendido).
+ * Requiere permisos de administrador.
+ * 
+ * @param formData - Contiene 'id_usuario', 'currentStatus' y 'currentPath' para revalidación.
+ * @returns Un objeto con el resultado y el nuevo estado asignado.
+ */
 export async function toggleVendorStatusAction(formData: FormData) {
   try {
     const cookieStore = await cookies();

@@ -6,9 +6,18 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 
+/**
+ * Página de visualización administrativa del perfil de un proveedor específico.
+ * Permite a los administradores ver el perfil completo de cualquier proveedor
+ * y asignarles proyectos directamente.
+ * 
+ * @param props - Contiene los parámetros de la URL, incluyendo el username del proveedor.
+ * @returns El elemento JSX con la vista de perfil en modo administrativo.
+ */
 export default async function VendorDetailPage({
   params,
 }: {
+  /** Parámetros de la ruta dinámica (Next 16 Promise). */
   params: Promise<{ username?: string }>;
 }) {
   // ✅ Verificación Admin

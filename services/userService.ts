@@ -45,7 +45,18 @@ type AddCertInput = {
   url_archivo: string;
 };
 
+/**
+ * Servicio para la gestión de usuarios, registros y perfiles de proveedor.
+ */
 export const userService = {
+  /**
+   * Registra un nuevo usuario en el sistema.
+   * Crea el registro de usuario, su perfil de proveedor (si aplica), asigna roles
+   * e inicializa una foto de perfil predeterminada.
+   * 
+   * @param data - Datos necesarios para el registro del usuario.
+   * @returns El usuario creado.
+   */
   async registerUser(data: RegisterUserInput) {
     return await db.$transaction(async (tx) => {
       // 1) Crear Usuario base + redes
@@ -133,6 +144,12 @@ export const userService = {
     });
   },
 
+  /**
+   * Añade una hoja de vida (CV) a un perfil de proveedor.
+   * 
+   * @param data - Contiene el ID del proveedor y la URL del PDF cargado.
+   * @returns El registro de la hoja de vida creado.
+   */
   async addProveedorCv(data: AddCvInput) {
     // Modelo Prisma: hoja_vida_proveedor (con guiones bajos)
     return await db.hoja_vida_proveedor.create({
@@ -143,6 +160,12 @@ export const userService = {
     });
   },
 
+  /**
+   * Añade una certificación a un perfil de proveedor.
+   * 
+   * @param data - Detalles de la certificación, incluyendo fechas y URL del archivo.
+   * @returns El registro de la certificación creado.
+   */
   async addProveedorCertificacion(data: AddCertInput) {
     return await db.certificacion.create({
       data: {
@@ -159,6 +182,13 @@ export const userService = {
     });
   },
 
+  /**
+   * Elimina un usuario del sistema, incluyendo sus archivos asociados en el almacenamiento en la nube.
+   * El borrado en cascada de la base de datos se encarga de las relaciones.
+   * 
+   * @param id_usuario - El ID único del usuario a eliminar.
+   * @returns El usuario eliminado o null si no existe.
+   */
   async deleteUser(id_usuario: string) {
     // 1. Obtener datos antes de borrar
     const user = await db.usuario.findUnique({

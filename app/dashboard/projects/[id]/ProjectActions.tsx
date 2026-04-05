@@ -8,11 +8,20 @@ import {
   updateProjectStatusAction,
 } from "./actions";
 
+/**
+ * Componente que agrupa las acciones administrativas para un proyecto.
+ * Proporciona botones y modales para editar, cambiar el estado y eliminar el proyecto.
+ * 
+ * @param props - El objeto del proyecto y la lista de proveedores (opcional).
+ * @returns El elemento JSX con los botones de acción y sus respectivos modales.
+ */
 export default function ProjectActions({
   project,
   providers,
 }: {
+  /** Objeto con la información completa del proyecto. */
   project: any;
+  /** Lista de proveedores registrados en el sistema. */
   providers: any[];
 }) {
   const [openEdit, setOpenEdit] = useState(false);
@@ -43,6 +52,12 @@ export default function ProjectActions({
   // delete: si success, el page.tsx normalmente redirige? aquí no, así que lo dejamos (server hará revalidate)
   // tú podrás hacer redirect desde server action más adelante si quieres.
 
+  /**
+   * Formatea una fecha para ser compatible con el valor de un input de tipo date (YYYY-MM-DD).
+   * 
+   * @param d - La fecha a formatear.
+   * @returns La cadena de fecha en formato ISO o vacío si no hay fecha.
+   */
   const fmtDate = (d: any) => (d ? new Date(d).toISOString().slice(0, 10) : "");
 
   return (

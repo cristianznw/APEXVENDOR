@@ -2,8 +2,23 @@
 
 import { useActionState, useEffect } from "react";
 
-type ActionState = { success?: boolean; error?: string } | null;
+/**
+ * El estado resultante de una acción de servidor para la asignación de proyecto.
+ */
+type ActionState = { 
+  /** Indica si la operación fue exitosa. */
+  success?: boolean; 
+  /** Mensaje de error descriptivo en caso de fallo. */
+  error?: string 
+} | null;
 
+/**
+ * Componente modal que permite a un administrador asignar un proveedor a un proyecto específico.
+ * Utiliza hooks de React para manejar el estado de la acción de servidor y el ciclo de vida del modal.
+ * 
+ * @param props - Incluye el estado de visibilidad, callbacks de cierre y éxito, ID del usuario, lista de proyectos disponibles y la acción de servidor.
+ * @returns El elemento JSX del modal de asignación.
+ */
 export default function AssignToProjectModal({
     open,
     onClose,
@@ -12,11 +27,17 @@ export default function AssignToProjectModal({
     availableProjects = [],
     assignAction,
 }: {
+    /** Indica si el modal está abierto. */
     open: boolean;
+    /** Función para cerrar el modal. */
     onClose: () => void;
+    /** Callback opcional que se ejecuta tras una asignación exitosa. */
     onSuccess?: () => void;
+    /** ID del proveedor que será asignado. */
     userId: string;
+    /** Lista de proyectos activos a los que se puede asignar el proveedor. */
     availableProjects?: any[];
+    /** Función de acción de servidor que ejecuta la lógica de asignación. */
     assignAction: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
     const [state, formAction, pending] = useActionState<ActionState, FormData>(

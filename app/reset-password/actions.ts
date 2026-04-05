@@ -3,6 +3,14 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
+/**
+ * Acción de servidor para restablecer la contraseña utilizando un token válido.
+ * Verifica la existencia y vigencia del token, hashea la nueva contraseña y actualiza el registro del usuario.
+ * Una vez completado, el token es eliminado para evitar su reutilización.
+ * 
+ * @param formData - Contiene el 'token', la nueva 'password' y su confirmación.
+ * @returns Un objeto indicando el éxito de la operación o un mensaje de error detallado.
+ */
 export async function resetPasswordAction(formData: FormData) {
     const token = formData.get("token") as string;
     const password = formData.get("password") as string;

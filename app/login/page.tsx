@@ -5,6 +5,13 @@ import { useActionState } from "react";
 import { loginAction } from "./actions";
 import Image from "next/image";
 
+/**
+ * Página de inicio de sesión de la aplicación.
+ * Proporciona el formulario para que los usuarios (Administradores o Proveedores) accedan al sistema.
+ * Utiliza `framer-motion` para animaciones de entrada y `useActionState` para manejar la lógica de autenticación.
+ * 
+ * @returns El elemento JSX con el formulario de login.
+ */
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, null);
 

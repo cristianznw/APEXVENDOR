@@ -19,6 +19,10 @@ declare global {
   var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
+/**
+ * Instancia compartida del cliente de Prisma para la interacción con la base de datos PostgreSQL.
+ * Implementa el patrón Singleton para evitar múltiples conexiones en entornos de desarrollo.
+ */
 export const db = globalThis.prisma ?? prismaClientSingleton();
 
 if (process.env.NODE_ENV !== "production") globalThis.prisma = db;

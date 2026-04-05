@@ -13,6 +13,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * Metadatos globales de la aplicación.
+ * Define el título, descripción e iconos que aparecen en la pestaña del navegador y motores de búsqueda.
+ */
 export const metadata: Metadata = {
   title: "ApexVendor | AI Intelligence Terminal",
   description:
@@ -25,9 +29,19 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Layout raíz de toda la aplicación.
+ * Configura el HTML base, el idioma (español), las fuentes tipográficas globales y envuelve
+ * la aplicación en el proveedor de contextos (NextUI/Providers).
+ * Incluye efectos visuales globales como la 'scanline'.
+ * 
+ * @param props - Elementos hijos a renderizar dentro de la estructura base.
+ * @returns El elemento JSX con la estructura HTML de primer nivel.
+ */
 export default function RootLayout({
   children,
 }: {
+  /** El contenido de la página o ruta actual. */
   children: React.ReactNode;
 }) {
   return (

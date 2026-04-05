@@ -4,6 +4,12 @@ import { db } from "@/lib/db";
 import { askGemini, getPdfText } from "@/lib/gemini";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Acción de servidor para crear una nueva métrica de evaluación.
+ * 
+ * @param formData - Datos del formulario que incluyen el nombre y notas de la métrica.
+ * @returns Un objeto con el resultado de la operación (éxito o mensaje de error).
+ */
 export async function createMetricAction(formData: FormData) {
   const nombre = formData.get("nombre") as string;
   const notas = formData.get("notas") as string;
@@ -28,6 +34,13 @@ export async function createMetricAction(formData: FormData) {
   }
 }
 
+/**
+ * Acción de servidor para eliminar una métrica existente.
+ * Verifica que la métrica no esté siendo utilizada en ninguna evaluación antes de proceder.
+ * 
+ * @param id - El identificador único de la métrica a eliminar.
+ * @returns Un objeto con el resultado de la operación (éxito o mensaje de error explicativo).
+ */
 export async function deleteMetricAction(id: string) {
   try {
     // Check if the metric has been used in any evaluation details
@@ -59,6 +72,14 @@ export async function deleteMetricAction(id: string) {
   }
 }
 
+/**
+ * Acción de servidor para enviar un mensaje al asistente de IA Apex Intelligence.
+ * Inyecta el contexto actual de la base de datos (proveedores, proyectos, evaluaciones) en el prompt.
+ * 
+ * @param message - El mensaje enviado por el usuario.
+ * @param history - El historial de la conversación actual.
+ * @returns La respuesta generada por la IA.
+ */
 export async function sendMessageAction(message: string, history: any[]) {
   try {
     // 1. Obtener los proveedores actuales de la DB
@@ -191,6 +212,13 @@ export async function sendMessageAction(message: string, history: any[]) {
   }
 }
 
+/**
+ * Acción de servidor para subir un archivo PDF y generar un análisis comparativo con los proveedores.
+ * Extrae el texto del PDF y utiliza la IA para recomendar los mejores proveedores para el proyecto descrito.
+ * 
+ * @param formData - Datos del formulario que contienen el archivo PDF.
+ * @returns Un objeto con el resumen del análisis o un mensaje de error.
+ */
 export async function uploadPdfAction(formData: FormData) {
   const file = formData.get("file") as File;
   if (!file) return { error: "No se subió ningún archivo" };

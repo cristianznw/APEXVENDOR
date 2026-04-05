@@ -5,6 +5,13 @@ import { useActionState, useEffect } from "react";
 
 type ActionState = { success?: boolean; error?: string } | null;
 
+/**
+ * Componente modal para editar los detalles de una asignación de proveedor existente en un proyecto.
+ * Permite modificar el rol del proveedor y las fechas de inicio/fin de su participación.
+ * 
+ * @param props - Incluye estado de apertura, la asignación a editar, ID del proyecto y la acción de actualización.
+ * @returns El elemento JSX del modal de edición de asignación.
+ */
 export default function EditVendorAssignmentModal({
   open,
   onClose,
@@ -13,11 +20,17 @@ export default function EditVendorAssignmentModal({
   projectId,
   updateAction,
 }: {
+  /** Indica si el modal está visible. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Callback opcional tras una actualización exitosa. */
   onSuccess?: () => void;
+  /** Objeto con los datos actuales de la asignación del proveedor. */
   assignment: any;
+  /** ID del proyecto actual. */
   projectId: string;
+  /** Acción de servidor para ejecutar la actualización de la asignación. */
   updateAction: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(

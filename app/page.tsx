@@ -4,6 +4,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
+/**
+ * Página de bienvenida (Landing Page) de ApexVendor.
+ * Punto de entrada público que presenta la marca y permite el acceso al login.
+ * Utiliza `framer-motion` para animaciones suaves en el logo y textos.
+ * 
+ * @returns El elemento JSX de la página de inicio.
+ */
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#252525] flex flex-col items-center justify-center p-6 text-center">

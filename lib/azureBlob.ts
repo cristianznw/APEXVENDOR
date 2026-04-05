@@ -26,6 +26,13 @@ function getBlockBlobClient(
   return containerClient.getBlockBlobClient(blobName);
 }
 
+/**
+ * Sube un archivo al almacenamiento de Azure Blob.
+ * Crea el contenedor si no existe y devuelve la URL permanente del archivo.
+ * 
+ * @param params - Objeto con el nombre del contenedor, nombre del blob y el archivo (File).
+ * @returns Un objeto con la URL, nombre, tamaño y tipo de contenido del blob.
+ */
 export async function uploadToAzureBlob(params: {
   containerName: string;
   blobName: string;
@@ -55,7 +62,12 @@ export async function uploadToAzureBlob(params: {
   };
 }
 
-/** Borrar blob sabiendo contenedor y blobName (tu función original) */
+/**
+ * Elimina un blob del almacenamiento de Azure dado su contenedor y nombre.
+ * 
+ * @param containerName - Nombre del contenedor de Azure.
+ * @param blobName - Nombre del archivo (blob) a eliminar.
+ */
 export async function deleteFromAzureBlob(
   containerName: string,
   blobName: string
@@ -65,7 +77,13 @@ export async function deleteFromAzureBlob(
   await blockBlobClient.deleteIfExists();
 }
 
-/** Extrae blobName desde una URL si ya conoces el container */
+/**
+ * Extrae el nombre del blob desde una URL completa si se conoce el nombre del contenedor.
+ * 
+ * @param fullUrl - URL completa del blob.
+ * @param containerName - Nombre del contenedor donde se encuentra.
+ * @returns El nombre del blob decodificado o null si no coincide con el contenedor.
+ */
 export function extractBlobNameFromUrl(
   fullUrl: string,
   containerName: string
@@ -83,7 +101,13 @@ export function extractBlobNameFromUrl(
   }
 }
 
-/** Extrae container + blobName desde una URL completa de Azure Blob */
+/**
+ * Analiza una URL de Azure Blob para extraer el nombre del contenedor y el nombre del blob.
+ * 
+ * @param blobUrl - URL completa del blob de Azure.
+ * @returns Un objeto con containerName y blobName.
+ * @throws Error si la URL no es válida para Azure Blob.
+ */
 export function parseAzureBlobUrl(blobUrl: string) {
   const u = new URL(blobUrl);
   const parts = u.pathname.split("/").filter(Boolean); // [container, ...blobPath]
@@ -94,7 +118,14 @@ export function parseAzureBlobUrl(blobUrl: string) {
   return { containerName, blobName };
 }
 
-/** Genera un SAS temporal de SOLO LECTURA para un blob guardado por URL */
+/**
+ * Genera una URL con firma de acceso compartido (SAS) temporal de solo lectura para un blob.
+ * Útil para dar acceso temporal a archivos privados.
+ * 
+ * @param blobUrl - URL original del blob.
+ * @param expiresInMinutes - Minutos de validez del token SAS (por defecto 10).
+ * @returns La URL completa concatenada con el token SAS generado.
+ */
 export function getReadSasUrlFromBlobUrl(
   blobUrl: string,
   expiresInMinutes = 10
@@ -120,7 +151,11 @@ export function getReadSasUrlFromBlobUrl(
   return `${base}?${sas}`;
 }
 
-/** Borrar blob usando la URL guardada en la BD */
+/**
+ * Elimina un blob del almacenamiento de Azure utilizando directamente su URL.
+ * 
+ * @param blobUrl - URL completa del blob a eliminar.
+ */
 export async function deleteBlobByUrl(blobUrl: string) {
   const { containerName, blobName } = parseAzureBlobUrl(blobUrl);
   await deleteFromAzureBlob(containerName, blobName);

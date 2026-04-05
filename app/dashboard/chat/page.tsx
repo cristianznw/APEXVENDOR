@@ -5,6 +5,13 @@ import ChatContainer from "./ChatContainer";
 import { db } from "@/lib/db";
 import CreateMetricModal from "./CreateMetricModal";
 
+/**
+ * Página principal del Chat de Inteligencia de Apex (Apex Intelligence).
+ * Realiza verificaciones de sesión, obtiene métricas de evaluación de la base de datos
+ * y renderiza el contenedor del chat con soporte para gestión de métricas.
+ * 
+ * @returns El elemento JSX de la página de chat.
+ */
 export default async function ChatPage() {
   const cookieStore = await cookies();
   const username = cookieStore.get("username")?.value;

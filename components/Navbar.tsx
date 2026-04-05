@@ -8,11 +8,23 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import UpdatePasswordModal from "./UpdatePasswordModal";
 
+/**
+ * Propiedades para el componente Navbar.
+ */
 interface NavbarProps {
+  /** El nombre de usuario que se mostrará en la barra de navegación. */
   username: string;
+  /** El rol del usuario (por ejemplo, 'Admin' o 'Proveedor') para renderizado condicional. */
   role: string;
 }
 
+/**
+ * Componente de barra de navegación principal.
+ * Proporciona enlaces dinámicos basados en el rol del usuario, gestión de sesión y acceso a configuraciones.
+ * 
+ * @param props - Las propiedades que incluyen el nombre de usuario y su rol.
+ * @returns El elemento JSX de la barra de navegación.
+ */
 export default function Navbar({ username, role }: NavbarProps) {
   const pathname = usePathname();
   const isAdmin = role === "Admin";

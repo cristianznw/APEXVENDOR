@@ -4,20 +4,41 @@ import { useEffect, useState, useActionState, useTransition } from "react";
 import Modal from "@/components/Modal";
 import { saveEvaluationAction } from "./actions";
 
+/**
+ * Representa una métrica de evaluación individual.
+ */
 interface Metric {
+    /** Identificador único de la métrica. */
     id_metrica: string;
+    /** Nombre descriptivo de la métrica. */
     nombre: string;
+    /** Notas o criterios de ayuda para la evaluación. */
     notas: string | null;
 }
 
+/**
+ * Propiedades para el componente EvaluateVendorModal.
+ */
 interface EvaluateVendorModalProps {
+    /** Indica si el modal está abierto. */
     isOpen: boolean;
+    /** Función para cerrar el modal. */
     onClose: () => void;
+    /** ID de la participación del proveedor en el proyecto. */
     participationId: string;
-    evaluatorId: string; // ID del usuario admin
+    /** ID del usuario administrador que realiza la evaluación. */
+    evaluatorId: string;
+    /** Lista de métricas disponibles para calificar. */
     metrics: Metric[];
 }
 
+/**
+ * Componente modal para que los administradores evalúen el desempeño de un proveedor.
+ * Permite asignar una calificación por estrellas a múltiples métricas y añadir un comentario final.
+ * 
+ * @param props - Configuración del modal, ID de participación, evaluador y métricas.
+ * @returns El elemento JSX del modal de evaluación.
+ */
 export default function EvaluateVendorModal({
     isOpen,
     onClose,

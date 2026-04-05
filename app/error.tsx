@@ -2,11 +2,21 @@
 
 import { useEffect } from "react";
 
+/**
+ * Componente de Error global (Error Boundary).
+ * Captura excepciones no manejadas en los componentes hijos y muestra una interfaz de recuperación.
+ * Permite al usuario reintentar la renderización (reset) o volver a la página de inicio.
+ * 
+ * @param props - Contiene el objeto error y la función reset.
+ * @returns El elemento JSX con la interfaz de error crítica.
+ */
 export default function Error({
   error,
   reset,
 }: {
+  /** El objeto de error capturado, puede incluir un digest para depuración en servidor. */
   error: Error & { digest?: string };
+  /** Función para intentar renderizar nuevamente el segmento que falló. */
   reset: () => void;
 }) {
   useEffect(() => {

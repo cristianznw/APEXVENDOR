@@ -5,11 +5,23 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { sendMessageAction, uploadPdfAction } from "./actions";
 
+/**
+ * Representa un mensaje individual en la conversación del chat.
+ */
 interface Message {
+  /** El rol del emisor del mensaje: 'user' (usuario) o 'ai' (asistente de IA). */
   role: "user" | "ai";
+  /** El contenido de texto del mensaje, soporta formato Markdown. */
   content: string;
 }
 
+/**
+ * Componente contenedor principal para la interfaz de chat de Apex Intelligence.
+ * Gestiona el historial de mensajes, la carga de archivos PDF para análisis,
+ * y la interacción en tiempo real con el Asistente de IA.
+ * 
+ * @returns El elemento JSX que renderiza la terminal de chat.
+ */
 export default function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");

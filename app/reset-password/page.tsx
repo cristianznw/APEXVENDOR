@@ -3,6 +3,13 @@
 import { useActionState, useEffect, useState } from "react";
 import { resetPasswordAction } from "./actions";
 
+/**
+ * Página de restablecimiento de contraseña.
+ * Extrae el token de la URL y permite al usuario definir una nueva contraseña.
+ * Incluye validaciones de cliente y manejo de estados mediante `useActionState`.
+ * 
+ * @returns El elemento JSX del formulario de cambio de contraseña.
+ */
 export default function ResetPasswordPage() {
     const [token, setToken] = useState<string | null>(null);
 

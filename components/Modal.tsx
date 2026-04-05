@@ -3,13 +3,27 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+/**
+ * Propiedades para el componente Modal.
+ */
 interface ModalProps {
+  /** Indica si el modal está visible. */
   isOpen: boolean;
+  /** Función que se ejecuta al intentar cerrar el modal. */
   onClose: () => void;
+  /** Título que se muestra en la cabecera del modal. */
   title: string;
+  /** Contenido que se renderizará dentro del cuerpo del modal. */
   children: React.ReactNode;
 }
 
+/**
+ * Componente de ventana modal reutilizable con transiciones suaves y desenfoque de fondo.
+ * Implementa un portal para renderizarse fuera de la jerarquía DOM principal.
+ * 
+ * @param props - Las propiedades del componente modal.
+ * @returns El elemento React renderizado vía portal.
+ */
 export default function Modal({
   isOpen,
   onClose,
