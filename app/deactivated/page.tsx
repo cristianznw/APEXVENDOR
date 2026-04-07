@@ -53,7 +53,7 @@ export default function DeactivatedPage() {
           Si quieres reactivar tu cuenta puedes enviar un correo con tu
           solicitud a{" "}
           <span className="text-white border-b border-white/20 pb-0.5">
-            soporte@apexvendor.com
+            soporte@apexvendor.com.co
           </span>
         </p>
 

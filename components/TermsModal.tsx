@@ -130,7 +130,7 @@ export default function TermsModal({
           <p className="mb-4">
             Para ejercer derechos de Habeas Data:
             <br />
-            📧 <strong>soporte@apexvendor.com</strong>
+            📧 <strong>soporte@apexvendor.com.co</strong>
           </p>
 
           <h3 className="text-base font-bold uppercase mb-2 mt-6 text-[#252525]">

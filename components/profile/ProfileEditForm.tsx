@@ -455,10 +455,10 @@ export default function ProfileEditForm({
                   Correo de soporte
                 </span>
                 <a
-                  href="mailto:support@apexvendor.com"
+                  href="mailto:support@apexvendor.com.co"
                   className="text-[#e9d26a] font-bold hover:underline"
                 >
-                  support@apexvendor.com
+                  support@apexvendor.com.co
                 </a>
               </div>
             </div>
