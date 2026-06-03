@@ -10,7 +10,7 @@ import CreateMetricModal from "./CreateMetricModal";
  * Realiza verificaciones de sesión, obtiene métricas de evaluación de la base de datos
  * y renderiza el contenedor del chat con soporte para gestión de métricas.
  * 
- * @returns El elemento JSX de la página de chat.
+ * @returns El elemento JSX de la página de chabun i.
  */
 export default async function ChatPage() {
   const cookieStore = await cookies();
